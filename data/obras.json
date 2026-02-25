@@ -1,6 +1,6 @@
 {
   "instrucao": "Arquivo gerado pelo Portal de Imagens de Obras. No Power BI, use Obter Dados > Web e cole a URL raw deste arquivo.",
-  "geradoEm": "2026-02-25T11:01:36.840Z",
+  "geradoEm": "2026-02-25T13:52:25.270Z",
   "obras": [
     {
       "id": 1,
@@ -8,12 +8,17 @@
       "nome": "Obra 01",
       "local": "Local da Obra 01",
       "status": "em_andamento",
-      "capa": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/capa.png",
+      "capa": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/capa.jpg",
       "imagens": [
         "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-01.png",
-        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-02.png"
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-02.png",
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-01.jpeg",
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-02.jpeg",
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-03.jpeg",
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-04.jpeg",
+        "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/images/obra-01/img-05.jpeg"
       ],
-      "totalImagens": 3,
+      "totalImagens": 8,
       "ultimaAtualizacao": "2026-02-25"
     },
     {
