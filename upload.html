@@ -79,6 +79,34 @@
 
           <hr style="border:none;border-top:1px solid #e0eaf5;margin:1rem 0">
 
+          <!-- ── Modo de Upload ── -->
+          <div class="form-group" style="margin-bottom:1rem">
+            <label class="form-label">Modo de Upload</label>
+            <div style="display:flex;flex-direction:column;gap:.5rem">
+
+              <label class="mode-opt">
+                <input type="radio" name="uploadMode" value="incrementar" checked>
+                <span class="mode-icon">➕</span>
+                <span>
+                  <strong>Adicionar às existentes</strong>
+                  <small>Mantém as fotos anteriores e adiciona as novas</small>
+                </span>
+              </label>
+
+              <label class="mode-opt mode-danger">
+                <input type="radio" name="uploadMode" value="substituir">
+                <span class="mode-icon">🗑️</span>
+                <span>
+                  <strong>Substituir tudo</strong>
+                  <small>Remove o histórico e começa do zero</small>
+                </span>
+              </label>
+
+            </div>
+          </div>
+
+          <hr style="border:none;border-top:1px solid #e0eaf5;margin:1rem 0">
+
           <button type="submit" class="btn btn-primary btn-lg" id="submitBtn"
             style="width:100%;justify-content:center">
             🚀 Enviar Imagens

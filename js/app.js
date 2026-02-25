@@ -548,6 +548,19 @@ async function handleUpload(e) {
       obrasData.obras.push(obraEntry);
     }
 
+    // ── Modo: incrementar ou substituir ──
+    const modo = document.querySelector('[name="uploadMode"]:checked')?.value || 'incrementar';
+
+    if (modo === 'substituir') {
+      obraEntry.imagens = [];
+      obraEntry.capa    = null;
+      setProgress(8, 'Limpando histórico de imagens...');
+    }
+
+    // Guarda quantas imagens já existem ANTES do upload
+    // (para numerar as novas a partir do próximo índice em modo incrementar)
+    const offsetBase = modo === 'substituir' ? 0 : obraEntry.imagens.length;
+
     const totalFiles = (_capaFile ? 1 : 0) + _progFiles.length;
     let   uploaded   = 0;
 
@@ -570,7 +583,8 @@ async function handleUpload(e) {
     for (let i = 0; i < _progFiles.length; i++) {
       const file = _progFiles[i];
       const ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
-      const num  = String(i + 1).padStart(2, '0');
+      // Numeração correta: em modo incrementar, começa após as existentes
+      const num  = String(offsetBase + i + 1).padStart(2, '0');
       const path = `${obraDir}/img-${num}.${ext}`;
       const pct  = startPct + perFile * i;
 

@@ -525,6 +525,34 @@ body {
   border: 1px solid var(--c-border);
   box-shadow: var(--shadow-sm);
 }
+/* ===== MODO DE UPLOAD (toggle substituir/incrementar) ===== */
+.mode-opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: .6rem .75rem;
+  border-radius: var(--r-sm);
+  border: 1.5px solid var(--c-border);
+  cursor: pointer;
+  transition: all .15s;
+  font-size: .8rem;
+  line-height: 1.35;
+  user-select: none;
+}
+.mode-opt:hover { border-color: var(--c-accent-light); background: #f8fbff; }
+.mode-opt:has(input:checked) {
+  border-color: var(--c-accent);
+  background: #eff6ff;
+}
+.mode-opt.mode-danger:has(input:checked) {
+  border-color: var(--c-danger);
+  background: #fff1f1;
+}
+.mode-opt input[type="radio"] { margin-top: 2px; flex-shrink: 0; accent-color: var(--c-primary-light); }
+.mode-opt strong { display: block; color: var(--c-text); font-size: .825rem; }
+.mode-opt small  { color: var(--c-text-muted); font-size: .73rem; }
+.mode-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.4; }
+
 .upload-card-title {
   font-size: .9rem;
   font-weight: 700;
