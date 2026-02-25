@@ -1,0 +1,21 @@
+{
+  "instrucao": "Arquivo gerado pelo Portal de Imagens de Obras. No Power BI, use Obter Dados > Web e cole a URL raw deste arquivo.",
+  "geradoEm": null,
+  "obras": [
+    { "id": 1,  "codigo": "OBR-001", "nome": "Obra 01", "local": "Local da Obra 01", "status": "em_andamento", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 2,  "codigo": "OBR-002", "nome": "Obra 02", "local": "Local da Obra 02", "status": "em_andamento", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 3,  "codigo": "OBR-003", "nome": "Obra 03", "local": "Local da Obra 03", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 4,  "codigo": "OBR-004", "nome": "Obra 04", "local": "Local da Obra 04", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 5,  "codigo": "OBR-005", "nome": "Obra 05", "local": "Local da Obra 05", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 6,  "codigo": "OBR-006", "nome": "Obra 06", "local": "Local da Obra 06", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 7,  "codigo": "OBR-007", "nome": "Obra 07", "local": "Local da Obra 07", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 8,  "codigo": "OBR-008", "nome": "Obra 08", "local": "Local da Obra 08", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 9,  "codigo": "OBR-009", "nome": "Obra 09", "local": "Local da Obra 09", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 10, "codigo": "OBR-010", "nome": "Obra 10", "local": "Local da Obra 10", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 11, "codigo": "OBR-011", "nome": "Obra 11", "local": "Local da Obra 11", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 12, "codigo": "OBR-012", "nome": "Obra 12", "local": "Local da Obra 12", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 13, "codigo": "OBR-013", "nome": "Obra 13", "local": "Local da Obra 13", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 14, "codigo": "OBR-014", "nome": "Obra 14", "local": "Local da Obra 14", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null },
+    { "id": 15, "codigo": "OBR-015", "nome": "Obra 15", "local": "Local da Obra 15", "status": "nao_iniciada", "capa": null, "imagens": [], "totalImagens": 0, "ultimaAtualizacao": null }
+  ]
+}
