@@ -185,6 +185,19 @@
       "imagens": [],
       "totalImagens": 0,
       "ultimaAtualizacao": null
+    },
+    {
+      "id": "OBR-001",
+      "nome": "Edifício Residencial Aurora",
+      "local": "São Paulo - SP",
+      "capa": "images/obra-001/capa.jpg",
+      "imagens": [
+        "images/obra-001/img-01.jpg",
+        "images/obra-001/img-02.jpg",
+        "images/obra-001/img-03.jpg"
+      ],
+      "updated_at": "2026-02-25T17:11:10.613Z"
     }
-  ]
+  ],
+  "updated_at": "2026-02-25T17:11:10.613Z"
 }
