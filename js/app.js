@@ -553,8 +553,8 @@ async function handleUpload(e) {
 
     if (modo === 'substituir') {
       obraEntry.imagens = [];
-      obraEntry.capa    = null;
-      setProgress(8, 'Limpando histórico de imagens...');
+      // capa não é limpa — ela é independente e raramente muda
+      setProgress(8, 'Limpando fotos de andamento...');
     }
 
     // Guarda quantas imagens já existem ANTES do upload
