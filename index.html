@@ -125,9 +125,13 @@
           <label class="form-label" for="inBranch">Branch <span>(padrão: main)</span></label>
           <input class="form-input" id="inBranch" type="text" placeholder="main" value="main">
         </div>
-        <div class="form-actions">
+        <div class="form-actions" style="flex-wrap:wrap;gap:.5rem">
           <button type="button" class="btn" style="background:#f1f5f9;color:#555"
             onclick="document.getElementById('settingsModal').classList.remove('open')">Cancelar</button>
+          <button type="button" class="btn" style="background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe"
+            onclick="generateSetupLink()" title="Gera um link para enviar aos engenheiros — ao abrir o link o portal deles já fica configurado">
+            🔗 Gerar Link para Engenheiros
+          </button>
           <button type="submit" class="btn btn-primary">Salvar e Verificar</button>
         </div>
       </form>

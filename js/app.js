@@ -4,6 +4,60 @@
  */
 
 // ═══════════════════════════════════════════════════════════════
+//  AUTO-SETUP via URL hash  (#setup=BASE64)
+//  O admin gera um link → engenheiro abre → portal já configurado
+// ═══════════════════════════════════════════════════════════════
+
+function checkAutoSetup() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#setup=')) return;
+
+  try {
+    const encoded = hash.slice(7);
+    const decoded = JSON.parse(atob(encoded));
+
+    if (decoded.owner && decoded.repo && decoded.token) {
+      saveGithubConfig(decoded.owner, decoded.repo, decoded.token, decoded.branch || 'main');
+      // Remove o hash da URL sem recarregar a página
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+      // Mostra confirmação após o DOM carregar
+      setTimeout(() => showToast('✅ Portal configurado automaticamente!', 'success'), 500);
+    }
+  } catch {
+    // hash inválido — ignora silenciosamente
+  }
+}
+
+// ─── Gerar link de configuração para compartilhar ──────────────
+
+function generateSetupLink() {
+  const cfg = getGithubConfig();
+
+  if (!cfg.owner || !cfg.repo || !cfg.token) {
+    showToast('Configure e salve o repositório primeiro.', 'error');
+    return;
+  }
+
+  const payload = btoa(JSON.stringify({
+    owner:  cfg.owner,
+    repo:   cfg.repo,
+    token:  cfg.token,
+    branch: cfg.branch || 'main',
+  }));
+
+  // Gera o link apontando para upload.html (página mais usada pelos engenheiros)
+  const base = window.location.origin + window.location.pathname.replace(/[^/]*$/, '');
+  const link = `${base}upload.html#setup=${payload}`;
+
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('🔗 Link copiado! Compartilhe com os engenheiros.', 'success');
+  }).catch(() => {
+    // Fallback: mostra o link em um prompt
+    window.prompt('Copie o link abaixo e compartilhe:', link);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  UTILITÁRIOS COMPARTILHADOS
 // ═══════════════════════════════════════════════════════════════
 
@@ -577,6 +631,7 @@ function setTextContent(id, text) {
 // ═══════════════════════════════════════════════════════════════
 
 document.addEventListener('DOMContentLoaded', () => {
+  checkAutoSetup(); // ← detecta link de auto-configuração
   initSettings();
 
   const page = document.body.dataset.page;
