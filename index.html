@@ -351,6 +351,14 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── BUSY OVERLAY ── */
+    .busy-overlay { display:none; position:fixed; inset:0; background:rgba(13,71,161,.6); z-index:9999; align-items:center; justify-content:center; }
+    .busy-overlay.show { display:flex; }
+    .busy-card { background:#fff; border-radius:16px; padding:40px 48px; text-align:center; box-shadow:0 16px 48px rgba(0,0,0,.3); max-width:360px; width:92%; }
+    .spinner-lg { width:48px; height:48px; border:5px solid var(--blue-light); border-top-color:var(--blue-primary); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 22px; }
+    .busy-title { font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:8px; }
+    .busy-sub   { font-size:.83rem; color:var(--text-secondary); line-height:1.55; }
+
     /* ── SYNC BADGE ── */
     .sync-badge { font-size:.75rem; color:rgba(255,255,255,.6); display:flex; align-items:center; gap:7px; white-space:nowrap; min-width:160px; justify-content:flex-end; }
     .sync-badge.syncing { color:#fff; }
@@ -509,6 +517,15 @@
 <!-- ════════════ FOOTER ════════════ -->
 <footer>Todos os direitos reservados a Mateus Monteiro &nbsp;·&nbsp; Portal de Fotos de Obras &nbsp;·&nbsp; Power BI Corporativo</footer>
 
+<!-- ════════════ BUSY OVERLAY ════════════ -->
+<div id="busyOverlay" class="busy-overlay">
+  <div class="busy-card">
+    <div class="spinner-lg"></div>
+    <p class="busy-title" id="busyTitle">Processando...</p>
+    <p class="busy-sub">Aguarde, isso pode levar alguns instantes.</p>
+  </div>
+</div>
+
 <!-- ════════════ MODAL: CONFIRM ════════════ -->
 <div class="modal-backdrop" id="confirmModal">
   <div class="modal">
@@ -562,6 +579,7 @@ const S = {
   andamento: [],
   tab: 'capa',
   confirmCb: null,
+  busy: false,
 };
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -696,6 +714,33 @@ async function loadAll() {
 let _syncTimer = null;
 let _syncTick  = 0;
 
+// ═══════════════════════════════════════════════════════════════════════════════
+// BUSY OVERLAY
+// ═══════════════════════════════════════════════════════════════════════════════
+function setBusy(on, msg = 'Processando...') {
+  S.busy = on;
+  document.getElementById('busyOverlay').classList.toggle('show', on);
+  if (on) document.getElementById('busyTitle').textContent = msg;
+}
+
+function updateBusyMsg(msg) {
+  document.getElementById('busyTitle').textContent = msg;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// API RETRY
+// ═══════════════════════════════════════════════════════════════════════════════
+async function apiWithRetry(fn, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      return await fn();
+    } catch (e) {
+      if (i === retries) throw e;
+      await new Promise(r => setTimeout(r, 1500 * (i + 1)));
+    }
+  }
+}
+
 function setSyncing(on) {
   const el = document.getElementById('syncBadge');
   if (!el) return;
@@ -719,7 +764,7 @@ function setSyncing(on) {
       if (_syncTick <= 0) {
         clearInterval(_syncTimer);
         _syncTimer = null;
-        if (S.obra) loadAll();
+        if (S.obra && !S.busy) loadAll();
       } else {
         render();
       }
@@ -788,29 +833,27 @@ function showTab(tab) {
 // UPLOAD: CAPA
 // ═══════════════════════════════════════════════════════════════════════════════
 async function uploadCapa(files) {
-  if (!files.length) return;
+  if (S.busy || !files.length) return;
   const file     = files[0];
   const existing = S.capaFiles[0];
   const base     = `Obras/${S.obra}/foto_capa`;
 
-  setProgress('capa', 20, 'Preparando...');
+  setBusy(true, 'Enviando foto de capa...');
   try {
     if (existing && existing.name !== file.name) {
-      setProgress('capa', 30, 'Removendo arquivo anterior...');
-      await ghDelete(`${base}/${existing.name}`, existing.sha);
+      await apiWithRetry(() => ghDelete(`${base}/${existing.name}`, existing.sha));
     }
-    setProgress('capa', 60, `Enviando ${file.name}...`);
     const sha = (existing && existing.name === file.name) ? existing.sha : null;
-    const res = await ghUpload(`${base}/${file.name}`, file, sha);
-    setProgress('capa', 100, 'Concluído!');
-    // B: local state update — no loadAll needed
+    const res = await apiWithRetry(() => ghUpload(`${base}/${file.name}`, file, sha));
     S.capaFiles = [{ name: res?.content?.name || file.name, sha: res?.content?.sha, path: res?.content?.path }];
     renderCapa();
+    setBusy(false);
     setSyncing(false);
-    setTimeout(() => { hideProgress('capa'); showTabAlert('capa', 'success', `"${file.name}" enviado com sucesso.`); }, 700);
+    showTabAlert('capa', 'success', `"${file.name}" enviado com sucesso.`);
   } catch(e) {
-    hideProgress('capa');
-    showTabAlert('capa', 'error', `Erro: ${e.message}`);
+    setBusy(false);
+    await loadAll();
+    showTabAlert('capa', 'error', 'Não foi possível enviar. Aguarde um momento e tente novamente.');
   }
   document.getElementById('capaInput').value = '';
 }
@@ -819,7 +862,7 @@ async function uploadCapa(files) {
 // UPLOAD: ANDAMENTO
 // ═══════════════════════════════════════════════════════════════════════════════
 async function uploadAndamento(files) {
-  if (!files.length) return;
+  if (S.busy || !files.length) return;
   const arr      = Array.from(files);
   S.andamento    = await listFolder(`Obras/${S.obra}/fotos_andamento`);
   renderAndamento();
@@ -856,83 +899,76 @@ async function uploadAndamento(files) {
 async function deleteAllThenUpload(arr) {
   const files = [...S.andamento];
   const base  = `Obras/${S.obra}/fotos_andamento`;
-  // D: optimistic clear + A: parallel deletes
   S.andamento = [];
   renderAndamento();
-  setProgress('andamento', 10, `Excluindo ${files.length} arquivo(s)...`);
+  setBusy(true, `Excluindo ${files.length} foto(s)...`);
   try {
-    await Promise.all(files.map(f => ghDelete(`${base}/${f.name}`, f.sha)));
+    for (let i = 0; i < files.length; i++) {
+      updateBusyMsg(`Excluindo foto ${i + 1} de ${files.length}...`);
+      await apiWithRetry(() => ghDelete(`${base}/${files[i].name}`, files[i].sha));
+      if (i < files.length - 1) await new Promise(r => setTimeout(r, 250));
+    }
   } catch (e) {
-    hideProgress('andamento');
-    showTabAlert('andamento', 'error', `Erro ao excluir: ${e.message}`);
+    setBusy(false);
     await loadAll();
+    showTabAlert('andamento', 'error', 'Não foi possível concluir. Aguarde um momento e tente novamente.');
     return;
   }
-  await doUploadAndamento(arr, 50);
+  await doUploadAndamento(arr, true);
 }
 
-async function doUploadAndamento(arr, startPct = 0) {
-  const base    = `Obras/${S.obra}/fotos_andamento`;
-  const BATCH   = 3;
+async function doUploadAndamento(arr, fromDelete = false) {
+  const base     = `Obras/${S.obra}/fotos_andamento`;
   const uploaded = [];
-
-  for (let i = 0; i < arr.length; i += BATCH) {
-    const batch = arr.slice(i, i + BATCH);
-    const pct   = startPct + Math.round((i / arr.length) * (100 - startPct));
-    setProgress('andamento', pct, `Enviando ${Math.min(i + BATCH, arr.length)}/${arr.length}...`);
-    try {
-      // C: parallel batch uploads
-      const results = await Promise.all(batch.map(f => {
-        const existing = S.andamento.find(x => x.name === f.name);
-        return ghUpload(`${base}/${f.name}`, f, existing?.sha || null);
-      }));
-      results.forEach((res, j) => {
-        const f = batch[j];
-        uploaded.push({ name: res?.content?.name || f.name, sha: res?.content?.sha, path: res?.content?.path });
-      });
-    } catch (e) {
-      hideProgress('andamento');
-      showTabAlert('andamento', 'error', `Erro no envio: ${e.message}`);
-      await loadAll();
-      return;
+  if (!fromDelete) setBusy(true, `Enviando ${arr.length} foto(s)...`);
+  try {
+    for (let i = 0; i < arr.length; i++) {
+      const f = arr[i];
+      updateBusyMsg(`Enviando foto ${i + 1} de ${arr.length}...`);
+      const existing = S.andamento.find(x => x.name === f.name);
+      const res = await apiWithRetry(() => ghUpload(`${base}/${f.name}`, f, existing?.sha || null));
+      uploaded.push({ name: res?.content?.name || f.name, sha: res?.content?.sha, path: res?.content?.path });
+      if (i < arr.length - 1) await new Promise(r => setTimeout(r, 200));
     }
+  } catch (e) {
+    setBusy(false);
+    await loadAll();
+    showTabAlert('andamento', 'error', 'Não foi possível enviar todos os arquivos. Aguarde um momento e tente novamente.');
+    return;
   }
-
-  setProgress('andamento', 100, 'Concluído!');
-  // B: local state update — no loadAll needed
   for (const u of uploaded) {
     const idx = S.andamento.findIndex(x => x.name === u.name);
     if (idx >= 0) S.andamento[idx] = u;
     else S.andamento.push(u);
   }
   renderAndamento();
+  setBusy(false);
   setSyncing(false);
-  setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento', 'success', `${arr.length} arquivo(s) enviado(s) com sucesso.`); }, 700);
+  showTabAlert('andamento', 'success', `${arr.length} foto(s) enviada(s) com sucesso.`);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DELETE SINGLE
 // ═══════════════════════════════════════════════════════════════════════════════
 function confirmDeleteSingle(folder, idx) {
+  if (S.busy) return;
   const files = folder === 'capa' ? S.capaFiles : S.andamento;
   const f = files[idx];
   showConfirm(
     'Excluir Arquivo',
     `Tem certeza que deseja excluir <strong>"${esc(f.name)}"</strong>?`,
     async () => {
-      // D: optimistic — remove from UI instantly
       if (folder === 'capa') { S.capaFiles.splice(idx, 1); renderCapa(); }
       else                   { S.andamento.splice(idx, 1); renderAndamento(); }
       setSyncing(false);
       const folderPath = folder === 'capa' ? 'foto_capa' : 'fotos_andamento';
       try {
-        await ghDelete(`Obras/${S.obra}/${folderPath}/${f.name}`, f.sha);
+        await apiWithRetry(() => ghDelete(`Obras/${S.obra}/${folderPath}/${f.name}`, f.sha));
         showTabAlert(folder, 'success', `"${f.name}" excluído.`);
       } catch(e) {
-        // Restore on failure
         if (folder === 'capa') { S.capaFiles.splice(idx, 0, f); renderCapa(); }
         else                   { S.andamento.splice(idx, 0, f); renderAndamento(); }
-        showTabAlert(folder, 'error', `Erro: ${e.message}`);
+        showTabAlert(folder, 'error', 'Não foi possível excluir. Tente novamente.');
       }
     }
   );
@@ -942,29 +978,31 @@ function confirmDeleteSingle(folder, idx) {
 // DELETE ALL (ANDAMENTO)
 // ═══════════════════════════════════════════════════════════════════════════════
 function confirmDeleteAll() {
-  if (!S.andamento.length) return;
+  if (S.busy || !S.andamento.length) return;
   showConfirm(
     'Excluir Todos os Arquivos',
     `Tem certeza que deseja excluir <strong>todos os ${S.andamento.length} arquivos</strong> de andamento?`,
     async () => {
       const files = [...S.andamento];
       const base  = `Obras/${S.obra}/fotos_andamento`;
-      // D: optimistic — clear UI instantly
       S.andamento = [];
       renderAndamento();
-      setProgress('andamento', 30, `Excluindo ${files.length} arquivo(s)...`);
+      setBusy(true, `Excluindo ${files.length} foto(s)...`);
       try {
-        // A: parallel deletes
-        await Promise.all(files.map(f => ghDelete(`${base}/${f.name}`, f.sha)));
+        for (let i = 0; i < files.length; i++) {
+          updateBusyMsg(`Excluindo foto ${i + 1} de ${files.length}...`);
+          await apiWithRetry(() => ghDelete(`${base}/${files[i].name}`, files[i].sha));
+          if (i < files.length - 1) await new Promise(r => setTimeout(r, 250));
+        }
       } catch(e) {
-        hideProgress('andamento');
-        showTabAlert('andamento', 'error', `Erro ao excluir: ${e.message}`);
-        await loadAll(); // re-sync on partial failure
+        setBusy(false);
+        await loadAll();
+        showTabAlert('andamento', 'error', 'Não foi possível excluir todos. Aguarde um momento e tente novamente.');
         return;
       }
-      setProgress('andamento', 100, 'Concluído!');
+      setBusy(false);
       setSyncing(false);
-      setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento', 'success', 'Todos os arquivos foram excluídos.'); }, 700);
+      showTabAlert('andamento', 'success', 'Todos os arquivos foram excluídos.');
     }
   );
 }
