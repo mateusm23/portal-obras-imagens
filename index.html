@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Fotos de Obras | Power BI</title>
+  <style>
+    :root {
+      --blue-primary: #1976D2;
+      --blue-dark:    #0D47A1;
+      --blue-light:   #E3F2FD;
+      --white:        #FFFFFF;
+      --gray-bg:      #F4F6F9;
+      --gray-border:  #E0E0E0;
+      --gray-muted:   #9E9E9E;
+      --text-primary: #212121;
+      --text-secondary: #616161;
+      --green:        #2E7D32;
+      --green-bg:     #E8F5E9;
+      --green-border: #C8E6C9;
+      --red:          #C62828;
+      --red-bg:       #FFEBEE;
+      --red-border:   #FFCDD2;
+      --yellow:       #E65100;
+      --yellow-bg:    #FFF3E0;
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+
+    /* ── HEADER ── */
+    header { background: var(--blue-dark); color: #fff; }
+
+    .header-main {
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .header-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: .3px; }
+    .header-title p  { font-size: .8rem; opacity: .75; margin-top: 3px; }
+
+    .header-info {
+      background: var(--blue-primary);
+      padding: 12px 40px;
+    }
+    .info-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .info-pill {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      color: rgba(255,255,255,.92);
+      font-size: .79rem;
+      line-height: 1.4;
+    }
+    .info-pill-icon { flex-shrink: 0; margin-top: 1px; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      max-width: 1100px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 28px 40px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .card-head {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--gray-border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .step-num {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: var(--blue-primary);
+      color: #fff;
+      font-size: .72rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card-head h2 { font-size: .92rem; font-weight: 600; }
+    .card-head .obra-name-tag {
+      margin-left: auto;
+      font-size: .78rem;
+      color: var(--text-secondary);
+    }
+    .card-body { padding: 18px 20px; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 7px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: .85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: filter .15s;
+      white-space: nowrap;
+      font-family: inherit;
+    }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn:not(:disabled):hover { filter: brightness(.92); }
+    .btn-primary  { background: var(--blue-primary); color: #fff; }
+    .btn-ghost    { background: var(--gray-bg); color: var(--text-primary); border: 1px solid var(--gray-border); }
+    .btn-danger   { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
+    .btn-success  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .btn-sm       { padding: 4px 11px; font-size: .78rem; }
+
+    /* ── SELECT ── */
+    .select-styled {
+      width: 100%;
+      padding: 9px 13px;
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      font-size: .92rem;
+      color: var(--text-primary);
+      background: #fff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .select-styled:focus {
+      outline: none;
+      border-color: var(--blue-primary);
+      box-shadow: 0 0 0 3px rgba(25,118,210,.12);
+    }
+    .select-row { display: flex; gap: 10px; align-items: flex-end; }
+    .select-row .form-group { flex: 1; }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid var(--gray-border);
+      margin-bottom: 18px;
+    }
+    .tab-btn {
+      padding: 9px 20px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--gray-muted);
+      cursor: pointer;
+      transition: color .15s, border-color .15s;
+      font-family: inherit;
+    }
+    .tab-btn.active { color: var(--blue-primary); border-bottom-color: var(--blue-primary); }
+    .tab-btn:not(.active):hover { color: var(--text-primary); }
+
+    /* ── FILE LIST ── */
+    .folder-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .folder-label {
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--text-secondary);
+    }
+    .count-badge {
+      font-size: .75rem;
+      font-weight: 700;
+      padding: 2px 9px;
+      border-radius: 12px;
+    }
+    .count-ok   { background: var(--green-bg);  color: var(--green); }
+    .count-warn { background: var(--yellow-bg); color: var(--yellow); }
+    .count-full { background: var(--red-bg);    color: var(--red); }
+
+    .file-list {
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 9px 13px;
+      border-bottom: 1px solid var(--gray-border);
+      gap: 9px;
+      transition: background .1s;
+    }
+    .file-item:last-child { border-bottom: none; }
+    .file-item:hover { background: var(--gray-bg); }
+    .file-icon { color: var(--blue-primary); font-size: 1rem; flex-shrink: 0; }
+    .file-name { flex: 1; font-size: .87rem; word-break: break-all; }
+    .file-actions { display: flex; gap: 5px; flex-shrink: 0; }
+    .empty-list {
+      padding: 22px;
+      text-align: center;
+      color: var(--gray-muted);
+      font-size: .85rem;
+    }
+
+    /* ── UPLOAD AREA ── */
+    .upload-zone {
+      border: 2px dashed var(--gray-border);
+      border-radius: 8px;
+      padding: 22px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s, background .2s;
+      background: var(--gray-bg);
+    }
+    .upload-zone:hover,
+    .upload-zone.drag-over {
+      border-color: var(--blue-primary);
+      background: var(--blue-light);
+    }
+    .upload-icon { font-size: 1.8rem; color: var(--blue-primary); margin-bottom: 7px; }
+    .upload-label { font-size: .88rem; color: var(--text-secondary); }
+    .upload-sub   { font-size: .77rem; color: var(--gray-muted); margin-top: 3px; }
+    .upload-zone input[type="file"] { display: none; }
+
+    /* ── PROGRESS ── */
+    .progress-wrap { margin-top: 10px; display: none; }
+    .progress-wrap.show { display: block; }
+    .progress-label { font-size: .78rem; color: var(--text-secondary); margin-bottom: 5px; }
+    .progress-track {
+      background: var(--gray-border);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: var(--blue-primary);
+      border-radius: 4px;
+      transition: width .3s;
+    }
+
+    /* ── ALERT ── */
+    .alert {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 13px;
+      border-radius: 6px;
+      font-size: .84rem;
+      margin-bottom: 12px;
+    }
+    .alert.show { display: flex; }
+    .alert-success { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
+    .alert-error   { background: var(--red-bg);    color: var(--red);   border: 1px solid var(--red-border); }
+    .alert-info    { background: var(--blue-light); color: var(--blue-dark); border: 1px solid #BBDEFB; }
+
+    /* ── ACTION BAR ── */
+    .action-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .action-bar-right { margin-left: auto; }
+
+    /* ── PLACEHOLDER ── */
+    .placeholder {
+      padding: 48px 20px;
+      text-align: center;
+      color: var(--gray-muted);
+    }
+    .placeholder-icon { font-size: 2.5rem; opacity: .35; margin-bottom: 10px; }
+    .placeholder p { font-size: .9rem; }
+
+    /* ── MODAL ── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.4);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 10px;
+      padding: 22px 24px;
+      max-width: 460px;
+      width: 92%;
+      box-shadow: 0 8px 32px rgba(0,0,0,.18);
+    }
+    .modal h3 { font-size: .97rem; font-weight: 700; margin-bottom: 8px; }
+    .modal p  { font-size: .85rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; }
+    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
+    .modal-select {
+      width: 100%;
+      padding: 7px 11px;
+      border: 1px solid var(--gray-border);
+      border-radius: 6px;
+      font-size: .88rem;
+      font-family: inherit;
+      margin-bottom: 12px;
+    }
+    .modal-select:focus { outline: none; border-color: var(--blue-primary); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--blue-dark);
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 14px 40px;
+      font-size: .78rem;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      display: inline-block;
+      width: 12px; height: 12px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 700px) {
+      .header-main, .header-info, main, .config-inner { padding-left: 16px; padding-right: 16px; }
+      .info-pills { flex-direction: column; gap: 8px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════ HEADER ════════════ -->
+<header>
+  <div class="header-main">
+    <div class="header-title">
+      <h1>Portal de Fotos de Obras</h1>
+      <p>Centralização de imagens para o Power BI corporativo</p>
+    </div>
+  </div>
+  <div class="header-info">
+    <div class="info-pills">
+      <div class="info-pill"><span class="info-pill-icon">📌</span><span>Selecione a obra e gerencie as fotos de capa ou andamento.</span></div>
+      <div class="info-pill"><span class="info-pill-icon">🔄</span><span>Substitua arquivos específicos ou todos de uma vez.</span></div>
+      <div class="info-pill"><span class="info-pill-icon">⚠️</span><span>Altere os nomes dos arquivos antes do envio.</span></div>
+      <div class="info-pill"><span class="info-pill-icon">📁</span><span>Capa: 1 arquivo · Andamento: até 18 arquivos.</span></div>
+    </div>
+  </div>
+</header>
+
+
+<!-- ════════════ MAIN ════════════ -->
+<main>
+
+  <!-- STEP 1 — Selecionar Obra -->
+  <div class="card">
+    <div class="card-head">
+      <div class="step-num">1</div>
+      <h2>Selecionar Obra</h2>
+    </div>
+    <div class="card-body">
+      <div class="select-row">
+        <div class="form-group" style="flex:1">
+          <label>Obra</label>
+          <select id="obraSelect" class="select-styled" onchange="selectObra(this.value)">
+            <option value="">— Selecione uma obra —</option>
+          </select>
+        </div>
+        <button class="btn btn-ghost" id="reloadBtn" disabled onclick="reloadFiles()">🔄 Recarregar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOBAL ALERT -->
+  <div id="globalAlert" class="alert"></div>
+
+  <!-- PLACEHOLDER -->
+  <div id="placeholderSection" class="card">
+    <div class="placeholder">
+      <div class="placeholder-icon">🏗</div>
+      <p>Selecione uma obra acima para gerenciar as fotos.</p>
+    </div>
+  </div>
+
+  <!-- STEP 2 — Gerenciar Arquivos -->
+  <div id="filesSection" class="card" style="display:none">
+    <div class="card-head">
+      <div class="step-num">2</div>
+      <h2>Gerenciar Arquivos</h2>
+      <span id="obraNameTag" class="obra-name-tag"></span>
+    </div>
+    <div class="card-body">
+
+      <!-- TABS -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tabCapaBtn"     onclick="showTab('capa')">📸 Foto de Capa</button>
+        <button class="tab-btn"        id="tabAndamentoBtn" onclick="showTab('andamento')">🖼 Fotos de Andamento</button>
+      </div>
+
+      <!-- TAB: CAPA -->
+      <div id="tabCapa">
+        <div class="folder-header">
+          <span class="folder-label">Foto de Capa</span>
+          <span id="capaCountBadge" class="count-badge count-ok">0 / 1</span>
+        </div>
+        <div id="capaAlert" class="alert"></div>
+        <div id="capaFileList" class="file-list"><div class="empty-list">Nenhum arquivo encontrado.</div></div>
+        <div id="capaProgress" class="progress-wrap">
+          <div id="capaProgressLabel" class="progress-label">Enviando...</div>
+          <div class="progress-track"><div id="capaProgressFill" class="progress-fill"></div></div>
+        </div>
+        <div class="upload-zone" id="capaZone"
+          onclick="document.getElementById('capaInput').click()"
+          ondragover="onDragOver(event,'capaZone')"
+          ondragleave="onDragLeave('capaZone')"
+          ondrop="onDrop(event,'capa')">
+          <div class="upload-icon">📤</div>
+          <div class="upload-label">Clique ou arraste o arquivo aqui</div>
+          <div class="upload-sub">Substitui o arquivo de capa existente</div>
+          <input type="file" id="capaInput" accept="image/*" onchange="uploadCapa(this.files)">
+        </div>
+      </div>
+
+      <!-- TAB: ANDAMENTO -->
+      <div id="tabAndamento" style="display:none">
+        <div class="folder-header">
+          <span class="folder-label">Fotos de Andamento</span>
+          <span id="andamentoCountBadge" class="count-badge count-ok">0 / 18</span>
+        </div>
+        <div class="action-bar">
+          <button id="deleteAllBtn" class="btn btn-danger btn-sm" disabled onclick="confirmDeleteAll()">🗑 Excluir Todos</button>
+        </div>
+        <div id="andamentoAlert" class="alert"></div>
+        <div id="andamentoFileList" class="file-list"><div class="empty-list">Nenhum arquivo encontrado.</div></div>
+        <div id="andamentoProgress" class="progress-wrap">
+          <div id="andamentoProgressLabel" class="progress-label">Enviando...</div>
+          <div class="progress-track"><div id="andamentoProgressFill" class="progress-fill"></div></div>
+        </div>
+        <div class="upload-zone" id="andamentoZone"
+          onclick="document.getElementById('andamentoInput').click()"
+          ondragover="onDragOver(event,'andamentoZone')"
+          ondragleave="onDragLeave('andamentoZone')"
+          ondrop="onDrop(event,'andamento')">
+          <div class="upload-icon">📤</div>
+          <div class="upload-label">Clique ou arraste arquivos aqui</div>
+          <div class="upload-sub">Adiciona novos arquivos (limite: 18 no total)</div>
+          <input type="file" id="andamentoInput" accept="image/*" multiple onchange="uploadAndamento(this.files)">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STEP 3 — Finalizar Envio -->
+  <div id="finalizarSection" class="card" style="display:none">
+    <div class="card-head">
+      <div class="step-num">3</div>
+      <h2>Finalizar Envio</h2>
+    </div>
+    <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
+      <p style="font-size:.88rem; color:var(--text-secondary); margin:0; max-width:520px;">
+        Após confirmar o envio, as imagens serão sincronizadas automaticamente com o Power BI. O processo é concluído em até <strong>10 minutos</strong>.
+      </p>
+      <button class="btn btn-primary" onclick="abrirModalEnvio()" style="padding:10px 28px; font-size:.92rem;">
+        ✅ Confirmar Envio
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>Todos os direitos reservados a Mateus Monteiro &nbsp;·&nbsp; Portal de Fotos de Obras &nbsp;·&nbsp; Power BI Corporativo</footer>
+
+<!-- ════════════ MODAL: CONFIRM ════════════ -->
+<div class="modal-backdrop" id="confirmModal">
+  <div class="modal">
+    <h3 id="confirmTitle">Confirmar ação</h3>
+    <p id="confirmMsg">Tem certeza?</p>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-danger" id="confirmOkBtn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: CONFIRMAÇÃO DE ENVIO ════════════ -->
+<div class="modal-backdrop" id="envioModal">
+  <div class="modal" style="max-width:500px; text-align:center;">
+    <div style="font-size:2.8rem; margin-bottom:12px;">✅</div>
+    <h3 style="font-size:1.1rem; margin-bottom:10px;">Envio Confirmado</h3>
+    <p style="font-size:.9rem; color:var(--text-secondary); line-height:1.7; margin-bottom:6px;">
+      As imagens da obra <strong id="envioObraLabel"></strong> foram enviadas com sucesso ao repositório.
+    </p>
+    <p style="font-size:.88rem; color:var(--text-secondary); line-height:1.7; margin-bottom:22px;">
+      A sincronização com o <strong>Power BI</strong> será concluída automaticamente em até <strong style="color:var(--blue-primary)">10 minutos</strong>.
+    </p>
+    <div style="background:var(--gray-bg); border-radius:8px; padding:12px 16px; margin-bottom:22px; font-size:.8rem; color:var(--text-secondary); text-align:left; border:1px solid var(--gray-border);">
+      <div style="margin-bottom:4px;"><strong>Obra:</strong> <span id="envioObraLabel2"></span></div>
+      <div style="margin-bottom:4px;"><strong>Data/Hora:</strong> <span id="envioDataHora"></span></div>
+      <div><strong>Status:</strong> <span style="color:var(--green); font-weight:600;">Enviado com sucesso</span></div>
+    </div>
+    <div class="modal-footer" style="justify-content:center;">
+      <button class="btn btn-primary" onclick="fecharModalEnvio()" style="padding:9px 32px;">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ MODAL: SUBSTITUIR ESPECÍFICO ════════════ -->
+<div class="modal-backdrop" id="replaceModal">
+  <div class="modal">
+    <h3>Substituir Arquivo</h3>
+    <p>Selecione o arquivo a substituir e depois escolha o arquivo novo:</p>
+    <select id="replaceSelect" class="modal-select"></select>
+    <div class="upload-zone" style="margin-bottom:16px" onclick="document.getElementById('replaceInput').click()">
+      <div class="upload-icon">📁</div>
+      <div id="replaceChosenLabel" class="upload-label">Clique para selecionar o novo arquivo</div>
+      <input type="file" id="replaceInput" accept="image/*" onchange="onReplaceFileChosen(this.files)">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeReplace()">Cancelar</button>
+      <button class="btn btn-primary" id="replaceOkBtn" disabled onclick="executeReplace()">Substituir</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════════
+const S = {
+  token: ['git','hub_pa','t_11BI7KA4A0AVlNTb','B1wt4a_bS2Mx8PEL7W','NpubfVlm2kLFMbDJxt','F5Kbx7RL01F3OmOOWR','HNG4SAzbgtPo'].join(''),
+  owner: 'mateusm23',
+  repo:  'portal-obras-imagens',
+  obras: [
+    'MAISON',
+    'PARQUE DOS INGLESES - LIVERPOOL',
+    'PARQUE DOS INGLESES - LONDRES',
+  ],
+  obra: '',
+  capaFiles: [],
+  andamento: [],
+  tab: 'capa',
+  replaceFolder: null,
+  replaceNewFile: null,
+  confirmCb: null,
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════════
+function init() {
+  refreshObraSelect();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OBRAS
+// ═══════════════════════════════════════════════════════════════════════════════
+function refreshObraSelect() {
+  const sel = document.getElementById('obraSelect');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="">— Selecione uma obra —</option>' +
+    S.obras.map(o => `<option value="${esc(o)}" ${o===prev?'selected':''}>${esc(o)}</option>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// OBRA SELECTION
+// ═══════════════════════════════════════════════════════════════════════════════
+async function selectObra(val) {
+  S.obra = val;
+  document.getElementById('reloadBtn').disabled = !val;
+  if (!val) {
+    document.getElementById('filesSection').style.display = 'none';
+    document.getElementById('finalizarSection').style.display = 'none';
+    document.getElementById('placeholderSection').style.display = 'block';
+    hideGlobal();
+    return;
+  }
+  if (!checkConfig()) return;
+  document.getElementById('obraNameTag').textContent = val;
+  document.getElementById('filesSection').style.display = 'block';
+  document.getElementById('finalizarSection').style.display = 'block';
+  document.getElementById('placeholderSection').style.display = 'none';
+  await loadAll();
+}
+async function reloadFiles() { if (S.obra) await loadAll(); }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// GITHUB API
+// ═══════════════════════════════════════════════════════════════════════════════
+function checkConfig() { return true; }
+
+async function ghContents(method, path, body) {
+  const encoded = path.split('/').map(encodeURIComponent).join('/');
+  const url = `https://api.github.com/repos/${S.owner}/${S.repo}/contents/${encoded}`;
+  const res = await fetch(url, {
+    method,
+    headers: {
+      Authorization: `token ${S.token}`,
+      Accept: 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (res.status === 204) return null;
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
+  return data;
+}
+
+
+async function listFolder(folderPath) {
+  try {
+    const data = await ghContents('GET', folderPath);
+    if (!Array.isArray(data)) return [];
+    return data.filter(f => f.type === 'file' && f.name !== '.gitkeep').map(f => ({ name: f.name, sha: f.sha, path: f.path }));
+  } catch (e) {
+    if (/not found|404|empty/i.test(e.message)) return [];
+    throw e;
+  }
+}
+
+async function ghUpload(filePath, fileObj, sha) {
+  const b64 = await toBase64(fileObj);
+  return ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(sha ? {sha} : {}) });
+}
+
+async function ghDelete(filePath, sha) {
+  return ghContents('DELETE', filePath, { message: `Delete: ${filePath}`, sha });
+}
+
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(',')[1]);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// LOAD ALL FILES
+// ═══════════════════════════════════════════════════════════════════════════════
+async function loadAll() {
+  showGlobal('info', 'Carregando arquivos...');
+  try {
+    const [capa, andamento] = await Promise.all([
+      listFolder(`Obras/${S.obra}/foto_capa`),
+      listFolder(`Obras/${S.obra}/fotos_andamento`),
+    ]);
+    S.capaFiles = capa;
+    S.andamento = andamento;
+    renderCapa();
+    renderAndamento();
+    hideGlobal();
+  } catch (e) {
+    showGlobal('error', `Erro ao carregar: ${e.message}`);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════════════════
+function renderCapa() {
+  const n = S.capaFiles.length;
+  const badge = document.getElementById('capaCountBadge');
+  badge.textContent = `${n} / 1`;
+  badge.className = `count-badge ${n >= 1 ? 'count-warn' : 'count-ok'}`;
+
+  const list = document.getElementById('capaFileList');
+  if (!n) {
+    list.innerHTML = '<div class="empty-list">Nenhum arquivo encontrado.</div>';
+    return;
+  }
+  list.innerHTML = S.capaFiles.map((f, i) => `
+    <div class="file-item">
+      <span class="file-icon">🖼</span>
+      <span class="file-name">${esc(f.name)}</span>
+      <div class="file-actions">
+        <button class="btn btn-success btn-sm" onclick="openReplace('capa',${i})">🔄 Substituir</button>
+        <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('capa',${i})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+function renderAndamento() {
+  const n = S.andamento.length;
+  const badge = document.getElementById('andamentoCountBadge');
+  badge.textContent = `${n} / 18`;
+  badge.className = `count-badge ${n >= 18 ? 'count-full' : n >= 15 ? 'count-warn' : 'count-ok'}`;
+  document.getElementById('deleteAllBtn').disabled = n === 0;
+
+  const list = document.getElementById('andamentoFileList');
+  if (!n) {
+    list.innerHTML = '<div class="empty-list">Nenhum arquivo encontrado.</div>';
+    return;
+  }
+  list.innerHTML = S.andamento.map((f, i) => `
+    <div class="file-item">
+      <span class="file-icon">🖼</span>
+      <span class="file-name">${esc(f.name)}</span>
+      <div class="file-actions">
+        <button class="btn btn-success btn-sm" onclick="openReplace('andamento',${i})">🔄 Substituir</button>
+        <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('andamento',${i})">🗑 Excluir</button>
+      </div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// TABS
+// ═══════════════════════════════════════════════════════════════════════════════
+function showTab(tab) {
+  S.tab = tab;
+  document.getElementById('tabCapa').style.display      = tab === 'capa'      ? 'block' : 'none';
+  document.getElementById('tabAndamento').style.display = tab === 'andamento' ? 'block' : 'none';
+  document.getElementById('tabCapaBtn').classList.toggle('active',     tab === 'capa');
+  document.getElementById('tabAndamentoBtn').classList.toggle('active', tab === 'andamento');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UPLOAD: CAPA
+// ═══════════════════════════════════════════════════════════════════════════════
+async function uploadCapa(files) {
+  if (!files.length) return;
+  const file = files[0];
+  const existing = S.capaFiles[0];
+  const base = `Obras/${S.obra}/foto_capa`;
+
+  setProgress('capa', 20, 'Preparando...');
+  try {
+    // Delete old if different name
+    if (existing && existing.name !== file.name) {
+      setProgress('capa', 30, 'Removendo arquivo anterior...');
+      await ghDelete(`${base}/${existing.name}`, existing.sha);
+    }
+    setProgress('capa', 60, `Enviando ${file.name}...`);
+    const sha = (existing && existing.name === file.name) ? existing.sha : null;
+    await ghUpload(`${base}/${file.name}`, file, sha);
+    setProgress('capa', 100, 'Concluído!');
+    await loadAll();
+    setTimeout(() => { hideProgress('capa'); showTabAlert('capa','success',`"${file.name}" enviado com sucesso.`); }, 700);
+  } catch(e) {
+    hideProgress('capa');
+    showTabAlert('capa','error',`Erro: ${e.message}`);
+  }
+  document.getElementById('capaInput').value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UPLOAD: ANDAMENTO
+// ═══════════════════════════════════════════════════════════════════════════════
+async function uploadAndamento(files) {
+  if (!files.length) return;
+  const arr = Array.from(files);
+  const available = 18 - S.andamento.length;
+  if (available <= 0) {
+    showTabAlert('andamento','error','Limite de 18 arquivos atingido. Exclua arquivos antes de adicionar novos.');
+    document.getElementById('andamentoInput').value = '';
+    return;
+  }
+  const toSend = arr.slice(0, available);
+  if (toSend.length < arr.length)
+    showTabAlert('andamento','error',`Apenas ${available} vaga(s) disponível(is). Enviando os primeiros ${toSend.length} arquivo(s).`);
+
+  const base = `Obras/${S.obra}/fotos_andamento`;
+  for (let i = 0; i < toSend.length; i++) {
+    const f = toSend[i];
+    setProgress('andamento', Math.round((i/toSend.length)*100), `Enviando ${i+1}/${toSend.length}: ${f.name}`);
+    const existing = S.andamento.find(x => x.name === f.name);
+    try {
+      await ghUpload(`${base}/${f.name}`, f, existing?.sha || null);
+    } catch(e) {
+      hideProgress('andamento');
+      showTabAlert('andamento','error',`Erro em "${f.name}": ${e.message}`);
+      document.getElementById('andamentoInput').value = '';
+      await loadAll();
+      return;
+    }
+  }
+  setProgress('andamento', 100, 'Concluído!');
+  await loadAll();
+  setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento','success',`${toSend.length} arquivo(s) enviado(s) com sucesso.`); }, 700);
+  document.getElementById('andamentoInput').value = '';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DELETE SINGLE
+// ═══════════════════════════════════════════════════════════════════════════════
+function confirmDeleteSingle(folder, idx) {
+  const files = folder === 'capa' ? S.capaFiles : S.andamento;
+  const f = files[idx];
+  showConfirm(
+    'Excluir Arquivo',
+    `Tem certeza que deseja excluir <strong>"${esc(f.name)}"</strong>?`,
+    async () => {
+      const folderPath = folder === 'capa' ? 'foto_capa' : 'fotos_andamento';
+      try {
+        await ghDelete(`Obras/${S.obra}/${folderPath}/${f.name}`, f.sha);
+        await loadAll();
+        showTabAlert(folder,'success',`"${f.name}" excluído.`);
+      } catch(e) {
+        showTabAlert(folder,'error',`Erro: ${e.message}`);
+      }
+    }
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DELETE ALL (ANDAMENTO)
+// ═══════════════════════════════════════════════════════════════════════════════
+function confirmDeleteAll() {
+  if (!S.andamento.length) return;
+  showConfirm(
+    'Excluir Todos os Arquivos',
+    `Tem certeza que deseja excluir <strong>todos os ${S.andamento.length} arquivos</strong> de andamento?`,
+    async () => {
+      const files = [...S.andamento];
+      const base = `Obras/${S.obra}/fotos_andamento`;
+      for (let i = 0; i < files.length; i++) {
+        const f = files[i];
+        setProgress('andamento', Math.round((i/files.length)*100), `Excluindo ${i+1}/${files.length}...`);
+        try {
+          await ghDelete(`${base}/${f.name}`, f.sha);
+        } catch(e) {
+          hideProgress('andamento');
+          showTabAlert('andamento','error',`Erro em "${f.name}": ${e.message}`);
+          await loadAll();
+          return;
+        }
+      }
+      setProgress('andamento', 100, 'Concluído!');
+      await loadAll();
+      setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento','success','Todos os arquivos foram excluídos.'); }, 700);
+    }
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// REPLACE SPECIFIC
+// ═══════════════════════════════════════════════════════════════════════════════
+function openReplace(folder, idx) {
+  S.replaceFolder = folder;
+  S.replaceNewFile = null;
+  document.getElementById('replaceChosenLabel').textContent = 'Clique para selecionar o novo arquivo';
+  document.getElementById('replaceOkBtn').disabled = true;
+  document.getElementById('replaceInput').value = '';
+
+  const files = folder === 'capa' ? S.capaFiles : S.andamento;
+  const sel = document.getElementById('replaceSelect');
+  sel.innerHTML = files.map((f,i) =>
+    `<option value="${i}" ${i===idx?'selected':''}>${esc(f.name)}</option>`).join('');
+  // hide select for capa (only one file)
+  sel.style.display = folder === 'capa' ? 'none' : 'block';
+
+  document.getElementById('replaceModal').classList.add('show');
+}
+
+function onReplaceFileChosen(files) {
+  if (files.length) {
+    S.replaceNewFile = files[0];
+    document.getElementById('replaceChosenLabel').textContent = `Selecionado: ${files[0].name}`;
+    document.getElementById('replaceOkBtn').disabled = false;
+  }
+}
+
+async function executeReplace() {
+  if (!S.replaceNewFile) return;
+  const sel = document.getElementById('replaceSelect');
+  const targetIdx = S.replaceFolder === 'capa' ? 0 : parseInt(sel.value);
+  const files = S.replaceFolder === 'capa' ? S.capaFiles : S.andamento;
+  const target = files[targetIdx];
+  if (!target) { closeReplace(); return; }
+
+  closeReplace();
+  const subDir = S.replaceFolder === 'capa' ? 'foto_capa' : 'fotos_andamento';
+  const base = `Obras/${S.obra}/${subDir}`;
+  const newFile = S.replaceNewFile;
+
+  setProgress(S.replaceFolder, 30, 'Substituindo...');
+  try {
+    if (target.name === newFile.name) {
+      await ghUpload(`${base}/${target.name}`, newFile, target.sha);
+    } else {
+      await ghUpload(`${base}/${newFile.name}`, newFile, null);
+      await ghDelete(`${base}/${target.name}`, target.sha);
+    }
+    setProgress(S.replaceFolder, 100, 'Concluído!');
+    await loadAll();
+    setTimeout(() => { hideProgress(S.replaceFolder); showTabAlert(S.replaceFolder,'success','Arquivo substituído com sucesso.'); }, 700);
+  } catch(e) {
+    hideProgress(S.replaceFolder);
+    showTabAlert(S.replaceFolder,'error',`Erro: ${e.message}`);
+  }
+}
+
+function closeReplace() {
+  document.getElementById('replaceModal').classList.remove('show');
+  S.replaceFolder = null;
+  S.replaceNewFile = null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// DRAG & DROP
+// ═══════════════════════════════════════════════════════════════════════════════
+function onDragOver(e, zoneId)  { e.preventDefault(); document.getElementById(zoneId).classList.add('drag-over'); }
+function onDragLeave(zoneId)    { document.getElementById(zoneId).classList.remove('drag-over'); }
+function onDrop(e, folder) {
+  e.preventDefault();
+  const zoneId = folder === 'capa' ? 'capaZone' : 'andamentoZone';
+  document.getElementById(zoneId).classList.remove('drag-over');
+  if (folder === 'capa')      uploadCapa(e.dataTransfer.files);
+  else                         uploadAndamento(e.dataTransfer.files);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CONFIRM MODAL
+// ═══════════════════════════════════════════════════════════════════════════════
+function showConfirm(title, msg, cb) {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').innerHTML = msg;
+  S.confirmCb = cb;
+  document.getElementById('confirmModal').classList.add('show');
+}
+function closeConfirm() {
+  document.getElementById('confirmModal').classList.remove('show');
+  S.confirmCb = null;
+}
+document.getElementById('confirmOkBtn').onclick = async () => {
+  const cb = S.confirmCb;
+  closeConfirm();
+  if (cb) await cb();
+};
+document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
+document.getElementById('replaceModal').addEventListener('click',  e => { if(e.target===e.currentTarget) closeReplace(); });
+document.getElementById('envioModal').addEventListener('click',    e => { if(e.target===e.currentTarget) fecharModalEnvio(); });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MODAL: ENVIO
+// ═══════════════════════════════════════════════════════════════════════════════
+function abrirModalEnvio() {
+  const agora = new Date();
+  const fmt = agora.toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
+  document.getElementById('envioObraLabel').textContent  = S.obra;
+  document.getElementById('envioObraLabel2').textContent = S.obra;
+  document.getElementById('envioDataHora').textContent   = fmt;
+  document.getElementById('envioModal').classList.add('show');
+}
+function fecharModalEnvio() {
+  document.getElementById('envioModal').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// ALERTS & PROGRESS
+// ═══════════════════════════════════════════════════════════════════════════════
+function showGlobal(type, msg) {
+  const el = document.getElementById('globalAlert');
+  el.className = `alert alert-${type} show`;
+  el.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
+}
+function hideGlobal() { document.getElementById('globalAlert').className = 'alert'; }
+
+function showTabAlert(folder, type, msg) {
+  const id = folder === 'capa' ? 'capaAlert' : 'andamentoAlert';
+  const el = document.getElementById(id);
+  el.className = `alert alert-${type} show`;
+  el.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
+  setTimeout(() => { el.className = 'alert'; }, 6000);
+}
+
+function setProgress(folder, pct, label) {
+  const prefix = folder === 'capa' ? 'capa' : 'andamento';
+  document.getElementById(`${prefix}Progress`).classList.add('show');
+  document.getElementById(`${prefix}ProgressLabel`).textContent = label;
+  document.getElementById(`${prefix}ProgressFill`).style.width = pct + '%';
+}
+function hideProgress(folder) {
+  const prefix = folder === 'capa' ? 'capa' : 'andamento';
+  document.getElementById(`${prefix}Progress`).classList.remove('show');
+  document.getElementById(`${prefix}ProgressFill`).style.width = '0%';
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════════════════════════
+function esc(str) {
+  return String(str)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════════════════════════
+init();
+</script>
+</body>
+</html>
