@@ -351,6 +351,12 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
+    /* ── SYNC BADGE ── */
+    .sync-badge { font-size:.75rem; color:rgba(255,255,255,.6); display:flex; align-items:center; gap:7px; white-space:nowrap; min-width:160px; justify-content:flex-end; }
+    .sync-badge.syncing { color:#fff; }
+    .sync-badge.synced  { color:rgba(255,255,255,.72); }
+    .sync-countdown     { opacity:.8; }
+
     /* ── RESPONSIVE ── */
     @media (max-width: 700px) {
       .header-main, .header-info, main, .config-inner { padding-left: 16px; padding-right: 16px; }
@@ -368,11 +374,11 @@
       <h1>Portal de Fotos de Obras</h1>
       <p>Centralização de imagens para o Power BI corporativo</p>
     </div>
+    <div id="syncBadge" class="sync-badge"></div>
   </div>
   <div class="header-info">
     <div class="info-pills">
       <div class="info-pill"><span class="info-pill-icon">📌</span><span>Selecione a obra e gerencie as fotos de capa ou andamento.</span></div>
-      <div class="info-pill"><span class="info-pill-icon">🔄</span><span>Substitua arquivos específicos ou todos de uma vez.</span></div>
       <div class="info-pill"><span class="info-pill-icon">⚠️</span><span>Altere os nomes dos arquivos antes do envio.</span></div>
       <div class="info-pill"><span class="info-pill-icon">📁</span><span>Capa: 1 arquivo · Andamento: até 18 arquivos.</span></div>
     </div>
@@ -537,23 +543,6 @@
   </div>
 </div>
 
-<!-- ════════════ MODAL: SUBSTITUIR ESPECÍFICO ════════════ -->
-<div class="modal-backdrop" id="replaceModal">
-  <div class="modal">
-    <h3>Substituir Arquivo</h3>
-    <p>Selecione o arquivo a substituir e depois escolha o arquivo novo:</p>
-    <select id="replaceSelect" class="modal-select"></select>
-    <div class="upload-zone" style="margin-bottom:16px" onclick="document.getElementById('replaceInput').click()">
-      <div class="upload-icon">📁</div>
-      <div id="replaceChosenLabel" class="upload-label">Clique para selecionar o novo arquivo</div>
-      <input type="file" id="replaceInput" accept="image/*" onchange="onReplaceFileChosen(this.files)">
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeReplace()">Cancelar</button>
-      <button class="btn btn-primary" id="replaceOkBtn" disabled onclick="executeReplace()">Substituir</button>
-    </div>
-  </div>
-</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -572,8 +561,6 @@ const S = {
   capaFiles: [],
   andamento: [],
   tab: 'capa',
-  replaceFolder: null,
-  replaceNewFile: null,
   confirmCb: null,
 };
 
@@ -674,6 +661,7 @@ function toBase64(file) {
 // LOAD ALL FILES
 // ═══════════════════════════════════════════════════════════════════════════════
 async function loadAll() {
+  setSyncing(true);
   showGlobal('info', 'Carregando arquivos...');
   try {
     const [capa, andamento] = await Promise.all([
@@ -687,6 +675,45 @@ async function loadAll() {
     hideGlobal();
   } catch (e) {
     showGlobal('error', `Erro ao carregar: ${e.message}`);
+  } finally {
+    setSyncing(false);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// SYNC INDICATOR
+// ═══════════════════════════════════════════════════════════════════════════════
+let _syncTimer = null;
+let _syncTick  = 0;
+
+function setSyncing(on) {
+  const el = document.getElementById('syncBadge');
+  if (!el) return;
+  clearInterval(_syncTimer);
+  _syncTimer = null;
+  if (on) {
+    el.className = 'sync-badge syncing';
+    el.innerHTML = '<span class="spinner"></span> Sincronizando...';
+  } else {
+    const hhmm = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    _syncTick = 120;
+    const render = () => {
+      const m = Math.floor(_syncTick / 60);
+      const s = String(_syncTick % 60).padStart(2, '0');
+      el.className = 'sync-badge synced';
+      el.innerHTML = `✓ ${hhmm} &nbsp;·&nbsp; <span class="sync-countdown">refresh em ${m}:${s}</span>`;
+    };
+    render();
+    _syncTimer = setInterval(() => {
+      _syncTick--;
+      if (_syncTick <= 0) {
+        clearInterval(_syncTimer);
+        _syncTimer = null;
+        if (S.obra) loadAll();
+      } else {
+        render();
+      }
+    }, 1000);
   }
 }
 
@@ -709,7 +736,6 @@ function renderCapa() {
       <span class="file-icon">🖼</span>
       <span class="file-name">${esc(f.name)}</span>
       <div class="file-actions">
-        <button class="btn btn-success btn-sm" onclick="openReplace('capa',${i})">🔄 Substituir</button>
         <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('capa',${i})">🗑 Excluir</button>
       </div>
     </div>`).join('');
@@ -732,7 +758,6 @@ function renderAndamento() {
       <span class="file-icon">🖼</span>
       <span class="file-name">${esc(f.name)}</span>
       <div class="file-actions">
-        <button class="btn btn-success btn-sm" onclick="openReplace('andamento',${i})">🔄 Substituir</button>
         <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('andamento',${i})">🗑 Excluir</button>
       </div>
     </div>`).join('');
@@ -783,38 +808,77 @@ async function uploadCapa(files) {
 // ═══════════════════════════════════════════════════════════════════════════════
 async function uploadAndamento(files) {
   if (!files.length) return;
-  const arr = Array.from(files);
-  S.andamento = await listFolder(`Obras/${S.obra}/fotos_andamento`);
+  const arr      = Array.from(files);
+  S.andamento    = await listFolder(`Obras/${S.obra}/fotos_andamento`);
   renderAndamento();
-  const available = 18 - S.andamento.length;
-  if (available <= 0) {
-    showTabAlert('andamento','error','Limite de 18 arquivos atingido. Exclua arquivos antes de adicionar novos.');
-    document.getElementById('andamentoInput').value = '';
-    return;
-  }
-  const toSend = arr.slice(0, available);
-  if (toSend.length < arr.length)
-    showTabAlert('andamento','error',`Apenas ${available} vaga(s) disponível(is). Enviando os primeiros ${toSend.length} arquivo(s).`);
+  document.getElementById('andamentoInput').value = '';
 
+  const current  = S.andamento.length;
+  const incoming = arr.length;
+
+  if (current >= 18) {
+    // Pasta cheia — perguntar se substitui tudo
+    showConfirm(
+      'Pasta cheia',
+      `A pasta já contém <strong>18 fotos</strong>. Deseja excluir todas e enviar as <strong>${incoming}</strong> foto(s) selecionada(s)?`,
+      () => deleteAllThenUpload(arr.slice(0, 18)), 'danger', 'Substituir todas'
+    );
+  } else if (current + incoming <= 18) {
+    // Cabe tudo — confirmar envio
+    showConfirm(
+      'Confirmar envio',
+      `Deseja adicionar <strong>${incoming}</strong> foto(s)? A pasta ficará com <strong>${current + incoming} / 18</strong>.`,
+      () => doUploadAndamento(arr), 'primary', 'Enviar'
+    );
+  } else {
+    // Excede o limite — perguntar se substitui tudo
+    const toSend = arr.slice(0, 18);
+    showConfirm(
+      'Limite excedido',
+      `As <strong>${incoming}</strong> fotos selecionadas + <strong>${current}</strong> existentes ultrapassam 18. Deseja excluir todas as atuais e enviar apenas as <strong>${toSend.length}</strong> novas?`,
+      () => deleteAllThenUpload(toSend), 'danger', 'Substituir todas'
+    );
+  }
+}
+
+async function deleteAllThenUpload(arr) {
+  const files = [...S.andamento];
+  const base  = `Obras/${S.obra}/fotos_andamento`;
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    setProgress('andamento', Math.round((i / files.length) * 50), `Excluindo ${i + 1}/${files.length}...`);
+    try {
+      await ghDelete(`${base}/${f.name}`, f.sha);
+    } catch (e) {
+      hideProgress('andamento');
+      showTabAlert('andamento', 'error', `Erro ao excluir "${f.name}": ${e.message}`);
+      await loadAll();
+      return;
+    }
+  }
+  S.andamento = await listFolder(`Obras/${S.obra}/fotos_andamento`);
+  await doUploadAndamento(arr, 50);
+}
+
+async function doUploadAndamento(arr, startPct = 0) {
   const base = `Obras/${S.obra}/fotos_andamento`;
-  for (let i = 0; i < toSend.length; i++) {
-    const f = toSend[i];
-    setProgress('andamento', Math.round((i/toSend.length)*100), `Enviando ${i+1}/${toSend.length}: ${f.name}`);
+  for (let i = 0; i < arr.length; i++) {
+    const f    = arr[i];
+    const pct  = startPct + Math.round((i / arr.length) * (100 - startPct));
+    setProgress('andamento', pct, `Enviando ${i + 1}/${arr.length}: ${f.name}`);
     const existing = S.andamento.find(x => x.name === f.name);
     try {
       await ghUpload(`${base}/${f.name}`, f, existing?.sha || null);
-    } catch(e) {
+    } catch (e) {
       hideProgress('andamento');
-      showTabAlert('andamento','error',`Erro em "${f.name}": ${e.message}`);
-      document.getElementById('andamentoInput').value = '';
+      showTabAlert('andamento', 'error', `Erro em "${f.name}": ${e.message}`);
       await loadAll();
       return;
     }
   }
   setProgress('andamento', 100, 'Concluído!');
   await loadAll();
-  setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento','success',`${toSend.length} arquivo(s) enviado(s) com sucesso.`); }, 700);
-  document.getElementById('andamentoInput').value = '';
+  setTimeout(() => { hideProgress('andamento'); showTabAlert('andamento', 'success', `${arr.length} arquivo(s) enviado(s) com sucesso.`); }, 700);
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
@@ -869,69 +933,6 @@ function confirmDeleteAll() {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// REPLACE SPECIFIC
-// ═══════════════════════════════════════════════════════════════════════════════
-function openReplace(folder, idx) {
-  S.replaceFolder = folder;
-  S.replaceNewFile = null;
-  document.getElementById('replaceChosenLabel').textContent = 'Clique para selecionar o novo arquivo';
-  document.getElementById('replaceOkBtn').disabled = true;
-  document.getElementById('replaceInput').value = '';
-
-  const files = folder === 'capa' ? S.capaFiles : S.andamento;
-  const sel = document.getElementById('replaceSelect');
-  sel.innerHTML = files.map((f,i) =>
-    `<option value="${i}" ${i===idx?'selected':''}>${esc(f.name)}</option>`).join('');
-  // hide select for capa (only one file)
-  sel.style.display = folder === 'capa' ? 'none' : 'block';
-
-  document.getElementById('replaceModal').classList.add('show');
-}
-
-function onReplaceFileChosen(files) {
-  if (files.length) {
-    S.replaceNewFile = files[0];
-    document.getElementById('replaceChosenLabel').textContent = `Selecionado: ${files[0].name}`;
-    document.getElementById('replaceOkBtn').disabled = false;
-  }
-}
-
-async function executeReplace() {
-  if (!S.replaceNewFile) return;
-  const sel = document.getElementById('replaceSelect');
-  const targetIdx = S.replaceFolder === 'capa' ? 0 : parseInt(sel.value);
-  const files = S.replaceFolder === 'capa' ? S.capaFiles : S.andamento;
-  const target = files[targetIdx];
-  if (!target) { closeReplace(); return; }
-
-  closeReplace();
-  const subDir = S.replaceFolder === 'capa' ? 'foto_capa' : 'fotos_andamento';
-  const base = `Obras/${S.obra}/${subDir}`;
-  const newFile = S.replaceNewFile;
-
-  setProgress(S.replaceFolder, 30, 'Substituindo...');
-  try {
-    if (target.name === newFile.name) {
-      await ghUpload(`${base}/${target.name}`, newFile, target.sha);
-    } else {
-      await ghUpload(`${base}/${newFile.name}`, newFile, null);
-      await ghDelete(`${base}/${target.name}`, target.sha);
-    }
-    setProgress(S.replaceFolder, 100, 'Concluído!');
-    await loadAll();
-    setTimeout(() => { hideProgress(S.replaceFolder); showTabAlert(S.replaceFolder,'success','Arquivo substituído com sucesso.'); }, 700);
-  } catch(e) {
-    hideProgress(S.replaceFolder);
-    showTabAlert(S.replaceFolder,'error',`Erro: ${e.message}`);
-  }
-}
-
-function closeReplace() {
-  document.getElementById('replaceModal').classList.remove('show');
-  S.replaceFolder = null;
-  S.replaceNewFile = null;
-}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DRAG & DROP
@@ -949,10 +950,13 @@ function onDrop(e, folder) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // CONFIRM MODAL
 // ═══════════════════════════════════════════════════════════════════════════════
-function showConfirm(title, msg, cb) {
+function showConfirm(title, msg, cb, btnStyle = 'danger', btnText = 'Confirmar') {
   document.getElementById('confirmTitle').textContent = title;
   document.getElementById('confirmMsg').innerHTML = msg;
   S.confirmCb = cb;
+  const btn = document.getElementById('confirmOkBtn');
+  btn.className = `btn btn-${btnStyle}`;
+  btn.textContent = btnText;
   document.getElementById('confirmModal').classList.add('show');
 }
 function closeConfirm() {
@@ -965,8 +969,7 @@ document.getElementById('confirmOkBtn').onclick = async () => {
   if (cb) await cb();
 };
 document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
-document.getElementById('replaceModal').addEventListener('click',  e => { if(e.target===e.currentTarget) closeReplace(); });
-document.getElementById('envioModal').addEventListener('click',    e => { if(e.target===e.currentTarget) fecharModalEnvio(); });
+document.getElementById('envioModal').addEventListener('click',   e => { if(e.target===e.currentTarget) fecharModalEnvio(); });
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MODAL: ENVIO
