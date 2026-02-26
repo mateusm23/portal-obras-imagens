@@ -640,7 +640,17 @@ async function listFolder(folderPath) {
 
 async function ghUpload(filePath, fileObj, sha) {
   const b64 = await toBase64(fileObj);
-  return ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(sha ? {sha} : {}) });
+  try {
+    return await ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(sha ? { sha } : {}) });
+  } catch (e) {
+    // SHA divergiu (estado local desatualizado) — busca o SHA real e tenta novamente
+    if (e.message && (e.message.includes('but expected') || e.message.includes('SHA does not match'))) {
+      const current  = await ghContents('GET', filePath).catch(() => null);
+      const freshSha = current?.sha;
+      return ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(freshSha ? { sha: freshSha } : {}) });
+    }
+    throw e;
+  }
 }
 
 async function ghDelete(filePath, sha) {
