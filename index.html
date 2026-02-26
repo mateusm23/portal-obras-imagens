@@ -784,6 +784,8 @@ async function uploadCapa(files) {
 async function uploadAndamento(files) {
   if (!files.length) return;
   const arr = Array.from(files);
+  S.andamento = await listFolder(`Obras/${S.obra}/fotos_andamento`);
+  renderAndamento();
   const available = 18 - S.andamento.length;
   if (available <= 0) {
     showTabAlert('andamento','error','Limite de 18 arquivos atingido. Exclua arquivos antes de adicionar novos.');
