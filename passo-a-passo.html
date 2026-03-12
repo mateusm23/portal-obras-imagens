@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Passo a Passo | Portal Power BI</title>
+  <style>
+    :root {
+      --blue-primary: #1976D2;
+      --blue-dark:    #0D47A1;
+      --blue-light:   #E3F2FD;
+      --gray-bg:      #F4F6F9;
+      --gray-border:  #E0E0E0;
+      --gray-muted:   #9E9E9E;
+      --text-primary: #212121;
+      --text-secondary: #616161;
+      --green:        #2E7D32;
+      --green-bg:     #E8F5E9;
+      --green-border: #C8E6C9;
+      --orange:       #E65100;
+      --orange-bg:    #FFF3E0;
+      --orange-border:#FFCC80;
+      --red:          #C62828;
+      --red-bg:       #FFEBEE;
+      --red-border:   #FFCDD2;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--gray-bg);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+    }
+
+    /* ── HEADER ── */
+    header { background: var(--blue-dark); color: #fff; }
+
+    .header-main {
+      padding: 18px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 13px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 6px;
+      color: rgba(255,255,255,.9);
+      font-size: .8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background .15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .btn-back:hover { background: rgba(255,255,255,.22); }
+    .header-title h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: .3px; }
+    .header-title p  { font-size: .8rem; opacity: .75; margin-top: 3px; }
+
+    /* ── MAIN ── */
+    main {
+      flex: 1;
+      max-width: 760px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 32px 40px 48px;
+    }
+
+    /* ── INTRO ── */
+    .intro {
+      background: var(--blue-light);
+      border: 1px solid #BBDEFB;
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-bottom: 28px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .intro-icon { font-size: 1.6rem; flex-shrink: 0; line-height: 1; margin-top: 2px; }
+    .intro-text h2 { font-size: .95rem; font-weight: 700; color: var(--blue-dark); margin-bottom: 5px; }
+    .intro-text p  { font-size: .84rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── STEPS ── */
+    .steps { display: flex; flex-direction: column; gap: 0; }
+
+    .step {
+      display: flex;
+      gap: 0;
+      position: relative;
+    }
+
+    /* linha vertical conectando os steps */
+    .step-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 52px;
+      flex-shrink: 0;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: var(--blue-primary);
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      z-index: 1;
+      box-shadow: 0 2px 8px rgba(25,118,210,.25);
+    }
+    .step-line {
+      width: 2px;
+      flex: 1;
+      background: var(--gray-border);
+      margin: 6px 0;
+      min-height: 24px;
+    }
+    .step:last-child .step-line { display: none; }
+
+    .step-body {
+      flex: 1;
+      background: #fff;
+      border: 1px solid var(--gray-border);
+      border-radius: 10px;
+      padding: 18px 20px 20px;
+      margin-bottom: 14px;
+      margin-left: 4px;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .step-icon { font-size: 1.2rem; }
+    .step-title { font-size: .97rem; font-weight: 700; }
+
+    .step-desc {
+      font-size: .85rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-bottom: 12px;
+    }
+
+    /* sub-lista dentro do step */
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .step-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: .84rem;
+      color: var(--text-primary);
+      line-height: 1.5;
+    }
+    .step-list li::before {
+      content: '→';
+      color: var(--blue-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* callout de aviso */
+    .callout {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      padding: 10px 14px;
+      border-radius: 7px;
+      font-size: .82rem;
+      line-height: 1.55;
+      margin-top: 12px;
+    }
+    .callout-icon { flex-shrink: 0; font-size: 1rem; }
+    .callout-warn {
+      background: var(--orange-bg);
+      border: 1px solid var(--orange-border);
+      color: var(--orange);
+    }
+    .callout-ok {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+    }
+    .callout-info {
+      background: var(--blue-light);
+      border: 1px solid #BBDEFB;
+      color: var(--blue-dark);
+    }
+
+    /* botão de ação dentro do step */
+    .step-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: var(--blue-primary);
+      color: #fff;
+      border-radius: 7px;
+      font-size: .83rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: filter .15s;
+      margin-top: 12px;
+    }
+    .step-action:hover { filter: brightness(.9); }
+    .step-action.external::after { content: ' ↗'; font-size: .75rem; }
+    .step-action.ghost {
+      background: transparent;
+      color: var(--blue-primary);
+      border: 1px solid var(--blue-primary);
+    }
+
+    /* tag de duração */
+    .step-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--gray-muted);
+      margin-left: auto;
+    }
+
+    /* ── RESUMO FINAL ── */
+    .summary {
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      border-radius: 10px;
+      padding: 18px 22px;
+      margin-top: 8px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .summary-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .summary-text h3 { font-size: .95rem; font-weight: 700; color: var(--green); margin-bottom: 5px; }
+    .summary-text p  { font-size: .84rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--blue-dark);
+      color: rgba(255,255,255,.6);
+      text-align: center;
+      padding: 14px 40px;
+      font-size: .78rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .header-main, main { padding-left: 16px; padding-right: 16px; }
+      .step-left { width: 38px; }
+      .step-num  { width: 28px; height: 28px; font-size: .8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-main">
+    <a href="index.html" class="btn-back">← Portal</a>
+    <div class="header-title">
+      <h1>Passo a Passo</h1>
+      <p>Como enviar fotos de obras para o Power BI</p>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <div class="intro-icon">📋</div>
+    <div class="intro-text">
+      <h2>Leia antes de começar</h2>
+      <p>
+        Este guia cobre todo o processo de envio de fotos — da preparação até a atualização
+        automática no Power BI. Siga as etapas na ordem indicada.
+        O processo completo leva em torno de <strong>5 a 10 minutos</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">1</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-icon">🗂️</span>
+          <span class="step-title">Separe as fotos da obra</span>
+        </div>
+        <p class="step-desc">
+          Reúna no computador todas as fotos que serão enviadas para a obra em questão.
+          Antes de qualquer coisa, saiba o que você vai precisar enviar:
+        </p>
+        <ul class="step-list">
+          <li><strong>Foto de capa:</strong> 1 foto principal que representa a obra no painel.</li>
+          <li><strong>Fotos de andamento:</strong> até 18 fotos mostrando o progresso atual da obra.</li>
+        </ul>
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
+          <span>Verifique se as fotos estão nos formatos <strong>JPG, PNG ou WEBP</strong> antes de continuar.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">2</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-icon">✏️</span>
+          <span class="step-title">Renomeie os arquivos</span>
+        </div>
+        <p class="step-desc">
+          O sistema exige que os arquivos sigam um padrão de nome específico.
+          Use o <strong>Renomeador de Fotos</strong> para fazer isso automaticamente com IA —
+          basta seguir as instruções do agente.
+        </p>
+        <ul class="step-list">
+          <li>Acesse o Renomeador pelo botão abaixo.</li>
+          <li>Informe quais são as fotos e de qual obra se tratam.</li>
+          <li>O agente irá gerar os nomes corretos para cada arquivo.</li>
+          <li>Renomeie os arquivos no seu computador conforme indicado.</li>
+        </ul>
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
+          <span><strong>Não pule esta etapa.</strong> Arquivos com nomes incorretos causam erros na visualização do Power BI.</span>
+        </div>
+        <a href="https://ai.studio/apps/drive/1yTKNjDwgbk49SqRkYqbxHtdnjaTp77C3?fullscreenApplet=true"
+           target="_blank" rel="noopener" class="step-action external">
+          Abrir Renomeador de Fotos
+        </a>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">3</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-icon">✂️</span>
+          <span class="step-title">Corte a foto de capa</span>
+        </div>
+        <p class="step-desc">
+          A foto de capa precisa ter a proporção exata de <strong>750 × 380 px</strong>
+          para ser exibida corretamente no painel. Use a ferramenta de corte abaixo.
+        </p>
+        <ul class="step-list">
+          <li>Acesse o Cortar Imagens pelo botão abaixo.</li>
+          <li>Arraste a foto de capa para a área indicada.</li>
+          <li>Posicione o quadro de recorte na parte mais importante da foto.</li>
+          <li>Clique em <strong>Exportar</strong> — o arquivo já virá no tamanho certo.</li>
+        </ul>
+        <div class="callout callout-info">
+          <span class="callout-icon">ℹ️</span>
+          <span>Esta etapa é necessária <strong>apenas para a foto de capa</strong>. As fotos de andamento não precisam ser cortadas.</span>
+        </div>
+        <a href="cortar.html" class="step-action">
+          Abrir Cortar Imagens
+        </a>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">4</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-icon">📤</span>
+          <span class="step-title">Faça o upload das fotos</span>
+        </div>
+        <p class="step-desc">
+          Com os arquivos renomeados e a capa cortada, acesse o Upload de Fotos e envie tudo.
+        </p>
+        <ul class="step-list">
+          <li>Selecione a <strong>obra</strong> correta no menu suspenso.</li>
+          <li>Na aba <strong>Foto de Capa:</strong> envie a foto cortada no passo anterior (substituirá a existente).</li>
+          <li>Na aba <strong>Fotos de Andamento:</strong> envie as fotos de progresso (limite de 18 arquivos).</li>
+          <li>Clique em <strong>Confirmar Envio</strong> ao final.</li>
+        </ul>
+        <div class="callout callout-warn">
+          <span class="callout-icon">⚠️</span>
+          <span>Confira se está na obra certa antes de enviar. O envio para a obra errada não é desfeito automaticamente.</span>
+        </div>
+        <a href="upload.html" class="step-action">
+          Abrir Upload de Fotos
+        </a>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-left">
+        <div class="step-num">5</div>
+        <div class="step-line"></div>
+      </div>
+      <div class="step-body">
+        <div class="step-header">
+          <span class="step-icon">⏱️</span>
+          <span class="step-title">Aguarde a sincronização</span>
+        </div>
+        <p class="step-desc">
+          Após o envio, o Power BI é atualizado automaticamente. Não é necessário fazer nada.
+        </p>
+        <ul class="step-list">
+          <li>A atualização ocorre em até <strong>10 minutos</strong>.</li>
+          <li>Abra o painel no Power BI e verifique se as fotos aparecem corretamente.</li>
+          <li>Caso algo não apareça após 15 minutos, refaça o upload do arquivo com problema.</li>
+        </ul>
+        <div class="callout callout-ok">
+          <span class="callout-icon">✅</span>
+          <span>Se as fotos aparecerem corretamente no painel, o processo foi concluído com sucesso.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RESUMO -->
+  <div class="summary">
+    <div class="summary-icon">🚀</div>
+    <div class="summary-text">
+      <h3>Resumo rápido</h3>
+      <p>
+        <strong>1.</strong> Separe as fotos &nbsp;→&nbsp;
+        <strong>2.</strong> Renomeie &nbsp;→&nbsp;
+        <strong>3.</strong> Corte a capa &nbsp;→&nbsp;
+        <strong>4.</strong> Faça o upload &nbsp;→&nbsp;
+        <strong>5.</strong> Aguarde até 10 min no Power BI.
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<footer>Todos os direitos reservados a Mateus Monteiro &nbsp;·&nbsp; Portal de Imagens &nbsp;·&nbsp; Power BI Corporativo</footer>
+
+</body>
+</html>

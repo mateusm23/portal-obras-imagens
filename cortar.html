@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cortar Imagens | Portal Power BI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap');
+
+  :root {
+    --bg: #f4f6f9;
+    --surface: #ffffff;
+    --border: #dde2ea;
+    --border2: #c8d0db;
+    --accent: #2563eb;
+    --accent-light: rgba(37,99,235,0.08);
+    --text: #111827;
+    --muted: #6b7280;
+    --muted2: #9ca3af;
+    --shadow: 0 1px 4px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky; top: 0; z-index: 20;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 14px; }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .btn-back:hover { color: var(--text); border-color: var(--muted); }
+
+  .logo { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .logo span { color: var(--accent); }
+
+  .header-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+  .badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--accent-light);
+    border: 1px solid rgba(37,99,235,0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+    font-weight: 700;
+  }
+
+  .size-inputs {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 8px;
+    padding: 6px 12px;
+  }
+  .size-inputs label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .size-inputs input[type=number] {
+    width: 54px;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid var(--border2);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    padding: 1px 2px;
+    -moz-appearance: textfield;
+    transition: border-color 0.15s;
+  }
+  .size-inputs input[type=number]::-webkit-inner-spin-button,
+  .size-inputs input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+  .size-inputs input[type=number]:focus { border-bottom-color: var(--accent); }
+  .size-sep { font-family: 'Space Mono', monospace; font-size: 13px; color: var(--muted2); }
+
+  .btn-apply {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 5px 12px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  }
+  .btn-apply:hover { background: #1d4ed8; transform: scale(1.03); }
+
+  .workspace {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 540px;
+    overflow: hidden;
+    height: calc(100vh - 53px);
+  }
+
+  /* DROP ZONE */
+  .drop-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+    transition: background 0.2s;
+    background: var(--bg);
+  }
+  .drop-zone:hover     { background: #eef2fb; }
+  .drop-zone.drag-over { background: rgba(37,99,235,0.06); }
+
+  .drop-icon {
+    width: 68px; height: 68px;
+    border: 2px dashed var(--border2);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    color: var(--muted2);
+    background: var(--surface);
+    transition: border-color 0.2s, transform 0.2s, background 0.2s;
+  }
+  .drop-zone:hover .drop-icon {
+    border-color: var(--accent);
+    transform: scale(1.07);
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+  .drop-label { font-size: 15px; font-weight: 600; color: var(--muted); }
+  .drop-sub   { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--muted2); letter-spacing: 1px; }
+  #fileInput  { display: none; }
+
+  /* CANVAS AREA */
+  .canvas-area {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid var(--border);
+    overflow: hidden;
+    position: relative;
+    background: #e8edf5;
+    background-image: radial-gradient(circle, #c8d0db 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+  .canvas-area.active { display: flex; }
+
+  .canvas-wrapper {
+    position: relative;
+    cursor: grab;
+    user-select: none;
+    flex-shrink: 0;
+  }
+  .canvas-wrapper:active { cursor: grabbing; }
+
+  #sourceCanvas {
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 0 0 1px var(--border2), var(--shadow);
+  }
+
+  .crop-frame {
+    position: absolute;
+    border: 2px solid var(--accent);
+    box-shadow:
+      0 0 0 9999px rgba(100,116,139,0.45),
+      0 0 0 3px rgba(37,99,235,0.15);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+  .crop-frame::before, .crop-frame::after {
+    content: '';
+    position: absolute;
+    width: 14px; height: 14px;
+    border-color: var(--accent);
+    border-style: solid;
+  }
+  .crop-frame::before { top: -2px; left: -2px; border-width: 2.5px 0 0 2.5px; }
+  .crop-frame::after  { bottom: -2px; right: -2px; border-width: 0 2.5px 2.5px 0; }
+
+  .frame-label {
+    position: absolute;
+    top: -22px; left: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    color: var(--accent);
+    letter-spacing: 1px;
+    white-space: nowrap;
+    background: rgba(255,255,255,0.9);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+
+  .canvas-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    color: var(--muted);
+    background: rgba(255,255,255,0.85);
+    padding: 5px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    overflow-y: auto;
+  }
+
+  .panel { padding: 18px 22px; border-bottom: 1px solid var(--border); }
+
+  .panel-title {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: var(--muted2); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 13px; font-weight: 700;
+  }
+
+  .preview-box {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+  }
+  #previewCanvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .preview-empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    color: var(--muted2); letter-spacing: 1px; min-height: 120px;
+  }
+
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .info-item {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 7px; padding: 10px 12px;
+  }
+  .info-key {
+    font-family: 'Space Mono', monospace; font-size: 8px;
+    color: var(--muted2); letter-spacing: 1px; margin-bottom: 4px; font-weight: 700;
+  }
+  .info-val { font-size: 13px; font-weight: 700; color: var(--text); }
+
+  .slider-row { display: flex; align-items: center; gap: 10px; }
+  .slider-lbl {
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--accent); min-width: 44px; text-align: right; font-weight: 700;
+  }
+
+  input[type=range] {
+    -webkit-appearance: none; flex: 1; height: 4px;
+    background: var(--border); border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px;
+    background: var(--accent); border-radius: 50%; cursor: pointer;
+    box-shadow: 0 1px 4px rgba(37,99,235,0.3); transition: transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.3); }
+
+  .pills { display: flex; gap: 6px; }
+  .pill {
+    flex: 1; padding: 7px 4px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 7px; text-align: center;
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    color: var(--muted); cursor: pointer; transition: all 0.15s; font-weight: 700;
+  }
+  .pill.active { background: var(--accent-light); border-color: rgba(37,99,235,0.35); color: var(--accent); }
+
+  .quality-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+  .quality-lbl {
+    font-family: 'Space Mono', monospace; font-size: 9px;
+    color: var(--muted2); letter-spacing: 1px; white-space: nowrap;
+  }
+
+  .btn-export {
+    margin: 18px 22px 8px;
+    padding: 15px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 8px;
+    font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    box-shadow: 0 4px 14px rgba(37,99,235,0.35);
+  }
+  .btn-export:hover { background: #1d4ed8; transform: translateY(-1px); }
+  .btn-export:active { transform: none; }
+  .btn-export:disabled { opacity: 0.3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-reset {
+    margin: 0 22px 18px; padding: 9px;
+    background: transparent; color: var(--muted);
+    border: 1px solid var(--border); border-radius: 7px;
+    font-family: 'Space Mono', monospace; font-size: 10px;
+    cursor: pointer; letter-spacing: 1px; font-weight: 700;
+    transition: all 0.15s; text-align: center;
+  }
+  .btn-reset:hover { border-color: var(--muted); color: var(--text); background: var(--bg); }
+
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    background: #111827; color: #fff;
+    padding: 11px 22px; border-radius: 100px;
+    font-family: 'Space Mono', monospace; font-size: 11px; font-weight: 700;
+    letter-spacing: 1px;
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 100; pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <a href="index.html" class="btn-back">← Portal</a>
+    <div class="logo">Cortar <span>Imagens</span></div>
+  </div>
+  <div class="header-right">
+    <div class="size-inputs">
+      <label>W</label>
+      <input type="number" id="inputW" value="750" min="1" max="9999">
+      <span class="size-sep">×</span>
+      <label>H</label>
+      <input type="number" id="inputH" value="380" min="1" max="9999">
+      <button class="btn-apply" id="btnApply">↵ aplicar</button>
+    </div>
+    <div class="badge" id="badgeSize">proporção 750:380</div>
+  </div>
+</header>
+
+<div class="workspace">
+
+  <div class="drop-zone" id="dropZone">
+    <div class="drop-icon">⬆</div>
+    <div class="drop-label">Solte ou clique para enviar</div>
+    <div class="drop-sub">PNG · JPG · WEBP · qualquer tamanho</div>
+    <input type="file" id="fileInput" accept="image/*">
+  </div>
+
+  <div class="canvas-area" id="canvasArea">
+    <div class="canvas-wrapper" id="canvasWrapper">
+      <canvas id="sourceCanvas"></canvas>
+      <div class="crop-frame" id="cropFrame">
+        <span class="frame-label" id="frameLabel">750:380</span>
+      </div>
+    </div>
+    <div class="canvas-hint">🖱 Arraste para mover o recorte · Scroll para zoom</div>
+  </div>
+
+  <div class="sidebar">
+
+    <div class="panel">
+      <div class="panel-title">Prévia do recorte</div>
+      <div class="preview-box" id="previewBox">
+        <canvas id="previewCanvas"></canvas>
+        <div class="preview-empty" id="previewEmpty">sem imagem</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Informações</div>
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-key">ORIGINAL</div>
+          <div class="info-val" id="infoOrig">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">SAÍDA</div>
+          <div class="info-val" id="infoOut">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">POS X</div>
+          <div class="info-val" id="infoPosX">—</div>
+        </div>
+        <div class="info-item">
+          <div class="info-key">POS Y</div>
+          <div class="info-val" id="infoPosY">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Zoom da tela</div>
+      <div class="slider-row">
+        <input type="range" id="zoomSlider" min="10" max="300" value="100">
+        <div class="slider-lbl" id="zoomVal">100%</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Formato de exportação</div>
+      <div class="pills">
+        <div class="pill active" data-fmt="png">PNG</div>
+        <div class="pill" data-fmt="jpeg">JPG</div>
+        <div class="pill" data-fmt="webp">WEBP</div>
+      </div>
+      <div class="quality-row" id="qualityRow" style="display:none">
+        <span class="quality-lbl">QUALIDADE</span>
+        <input type="range" id="qualitySlider" min="1" max="100" value="92">
+        <span class="slider-lbl" id="qualityVal">92%</span>
+      </div>
+    </div>
+
+    <button class="btn-export" id="btnExport" disabled>⬇ Exportar recorte</button>
+    <button class="btn-reset"  id="btnReset">↩ Nova imagem</button>
+
+  </div>
+</div>
+
+<div class="toast" id="toast">✓ Imagem exportada!</div>
+
+<script>
+  let RATIO_W = 750, RATIO_H = 380;
+  let img = null;
+  let zoom = 1;
+  let offsetX = 0, offsetY = 0;
+  let cropOrigW = 0, cropOrigH = 0;
+  let fmt = 'png', quality = 0.92;
+
+  const $ = id => document.getElementById(id);
+  const dropZone      = $('dropZone');
+  const fileInput     = $('fileInput');
+  const canvasArea    = $('canvasArea');
+  const canvasWrapper = $('canvasWrapper');
+  const srcCanvas     = $('sourceCanvas');
+  const srcCtx        = srcCanvas.getContext('2d');
+  const previewCanvas = $('previewCanvas');
+  const previewCtx    = previewCanvas.getContext('2d');
+  const previewBox    = $('previewBox');
+  const cropFrame     = $('cropFrame');
+  const frameLabel    = $('frameLabel');
+  const zoomSlider    = $('zoomSlider');
+  const zoomVal       = $('zoomVal');
+  const qualityRow    = $('qualityRow');
+  const qualitySlider = $('qualitySlider');
+  const qualityVal    = $('qualityVal');
+  const btnExport     = $('btnExport');
+  const btnReset      = $('btnReset');
+  const btnApply      = $('btnApply');
+  const inputW        = $('inputW');
+  const inputH        = $('inputH');
+  const badgeSize     = $('badgeSize');
+  const previewEmpty  = $('previewEmpty');
+  const infoOrig      = $('infoOrig');
+  const infoOut       = $('infoOut');
+  const infoPosX      = $('infoPosX');
+  const infoPosY      = $('infoPosY');
+  const toast         = $('toast');
+
+  function calcCropOrigSize() {
+    if (!img) return;
+    const ratio = RATIO_W / RATIO_H;
+    let w = img.naturalWidth;
+    let h = Math.round(w / ratio);
+    if (h > img.naturalHeight) {
+      h = img.naturalHeight;
+      w = Math.round(h * ratio);
+    }
+    cropOrigW = w;
+    cropOrigH = h;
+  }
+
+  function calcAutoZoom() {
+    const areaW = canvasArea.clientWidth  - 80;
+    const areaH = canvasArea.clientHeight - 80;
+    const z = Math.min(areaW / img.naturalWidth, areaH / img.naturalHeight);
+    return Math.max(0.05, Math.round(z * 100) / 100);
+  }
+
+  function clampX(v) { return Math.max(0, Math.min(v, img.naturalWidth  - cropOrigW)); }
+  function clampY(v) { return Math.max(0, Math.min(v, img.naturalHeight - cropOrigH)); }
+
+  function setZoom(z) {
+    zoom = Math.max(0.05, z);
+    zoomSlider.value = Math.round(zoom * 100);
+    zoomVal.textContent = Math.round(zoom * 100) + '%';
+  }
+
+  function render() {
+    if (!img) return;
+    const canvW = Math.round(img.naturalWidth  * zoom);
+    const canvH = Math.round(img.naturalHeight * zoom);
+    srcCanvas.width  = canvW;
+    srcCanvas.height = canvH;
+    srcCtx.drawImage(img, 0, 0, canvW, canvH);
+
+    const frameW = Math.round(cropOrigW * zoom);
+    const frameH = Math.round(cropOrigH * zoom);
+    const fx = Math.round(clampX(offsetX) * zoom);
+    const fy = Math.round(clampY(offsetY) * zoom);
+    offsetX = clampX(offsetX);
+    offsetY = clampY(offsetY);
+
+    cropFrame.style.left   = fx + 'px';
+    cropFrame.style.top    = fy + 'px';
+    cropFrame.style.width  = frameW + 'px';
+    cropFrame.style.height = frameH + 'px';
+
+    infoPosX.textContent = Math.round(offsetX) + 'px';
+    infoPosY.textContent = Math.round(offsetY) + 'px';
+    infoOut.textContent  = cropOrigW + '×' + cropOrigH + 'px';
+    btnExport.textContent = '⬇ Exportar ' + cropOrigW + '×' + cropOrigH;
+
+    previewCanvas.width  = cropOrigW;
+    previewCanvas.height = cropOrigH;
+    previewCtx.drawImage(img, offsetX, offsetY, cropOrigW, cropOrigH, 0, 0, cropOrigW, cropOrigH);
+    previewEmpty.style.display = 'none';
+  }
+
+  function updateLabels() {
+    badgeSize.textContent = 'proporção ' + RATIO_W + ':' + RATIO_H;
+    frameLabel.textContent = RATIO_W + ':' + RATIO_H;
+    previewBox.style.aspectRatio = RATIO_W + '/' + RATIO_H;
+  }
+
+  function applyDimensions() {
+    RATIO_W = Math.max(1, parseInt(inputW.value) || 750);
+    RATIO_H = Math.max(1, parseInt(inputH.value) || 380);
+    inputW.value = RATIO_W;
+    inputH.value = RATIO_H;
+    updateLabels();
+    if (img) {
+      calcCropOrigSize();
+      offsetX = clampX((img.naturalWidth  - cropOrigW) / 2);
+      offsetY = clampY((img.naturalHeight - cropOrigH) / 2);
+      render();
+    }
+  }
+
+  btnApply.addEventListener('click', applyDimensions);
+  inputW.addEventListener('keydown', e => { if (e.key === 'Enter') applyDimensions(); });
+  inputH.addEventListener('keydown', e => { if (e.key === 'Enter') applyDimensions(); });
+  updateLabels();
+
+  function loadImage(file) {
+    if (!file || !file.type.startsWith('image/')) return;
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      img = image;
+      URL.revokeObjectURL(url);
+      infoOrig.textContent = img.naturalWidth + '×' + img.naturalHeight;
+      dropZone.style.display = 'none';
+      canvasArea.classList.add('active');
+      btnExport.disabled = false;
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        calcCropOrigSize();
+        setZoom(calcAutoZoom());
+        offsetX = clampX((img.naturalWidth  - cropOrigW) / 2);
+        offsetY = clampY((img.naturalHeight - cropOrigH) / 2);
+        render();
+      }));
+    };
+    image.src = url;
+  }
+
+  dropZone.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', e => loadImage(e.target.files[0]));
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => { e.preventDefault(); dropZone.classList.remove('drag-over'); loadImage(e.dataTransfer.files[0]); });
+  canvasArea.addEventListener('dragover', e => e.preventDefault());
+  canvasArea.addEventListener('drop', e => { e.preventDefault(); loadImage(e.dataTransfer.files[0]); });
+
+  let dragging = false, dragStartX, dragStartY, dragOffX, dragOffY;
+
+  canvasWrapper.addEventListener('mousedown', e => {
+    dragging = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    dragOffX = offsetX;
+    dragOffY = offsetY;
+    e.preventDefault();
+  });
+
+  window.addEventListener('mousemove', e => {
+    if (!dragging || !img) return;
+    const dx = (e.clientX - dragStartX) / zoom;
+    const dy = (e.clientY - dragStartY) / zoom;
+    offsetX = clampX(dragOffX - dx);
+    offsetY = clampY(dragOffY - dy);
+    render();
+  });
+
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  canvasArea.addEventListener('wheel', e => {
+    if (!img) return;
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -0.05 : 0.05;
+    const newZoom = Math.max(0.05, zoom + delta);
+    setZoom(newZoom);
+    offsetX = clampX(offsetX);
+    offsetY = clampY(offsetY);
+    render();
+  }, { passive: false });
+
+  let touchStart = null;
+  canvasWrapper.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    touchStart = { x: t.clientX, y: t.clientY, offX: offsetX, offY: offsetY };
+  });
+  canvasWrapper.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!touchStart || !img) return;
+    const t = e.touches[0];
+    offsetX = clampX(touchStart.offX - (t.clientX - touchStart.x) / zoom);
+    offsetY = clampY(touchStart.offY - (t.clientY - touchStart.y) / zoom);
+    render();
+  }, { passive: false });
+
+  zoomSlider.addEventListener('input', () => {
+    if (!img) return;
+    setZoom(zoomSlider.value / 100);
+    offsetX = clampX(offsetX);
+    offsetY = clampY(offsetY);
+    render();
+  });
+
+  document.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+      fmt = p.dataset.fmt;
+      qualityRow.style.display = fmt === 'png' ? 'none' : 'flex';
+    });
+  });
+  qualitySlider.addEventListener('input', () => {
+    quality = qualitySlider.value / 100;
+    qualityVal.textContent = qualitySlider.value + '%';
+  });
+
+  btnExport.addEventListener('click', () => {
+    if (!img) return;
+    const ec = document.createElement('canvas');
+    ec.width  = cropOrigW;
+    ec.height = cropOrigH;
+    const ctx = ec.getContext('2d');
+    ctx.drawImage(img, offsetX, offsetY, cropOrigW, cropOrigH, 0, 0, cropOrigW, cropOrigH);
+    const mime = fmt === 'png' ? 'image/png' : fmt === 'jpeg' ? 'image/jpeg' : 'image/webp';
+    const link = document.createElement('a');
+    link.download = `recorte_${cropOrigW}x${cropOrigH}.${fmt === 'jpeg' ? 'jpg' : fmt}`;
+    link.href = ec.toDataURL(mime, quality);
+    link.click();
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  });
+
+  btnReset.addEventListener('click', () => {
+    img = null; offsetX = offsetY = 0; cropOrigW = cropOrigH = 0;
+    srcCanvas.width = srcCanvas.height = 0;
+    previewCanvas.width = previewCanvas.height = 0;
+    previewEmpty.style.display = '';
+    canvasArea.classList.remove('active');
+    dropZone.style.display = '';
+    btnExport.disabled = true;
+    fileInput.value = '';
+    infoOrig.textContent = '—'; infoOut.textContent = '—';
+    infoPosX.textContent = '—'; infoPosY.textContent = '—';
+    setZoom(1);
+    btnExport.textContent = '⬇ Exportar recorte';
+  });
+
+  document.addEventListener('keydown', e => {
+    if (!img || document.activeElement.tagName === 'INPUT') return;
+    const step = e.shiftKey ? 20 : 4;
+    if (e.key === 'ArrowLeft')  { offsetX = clampX(offsetX - step); render(); }
+    if (e.key === 'ArrowRight') { offsetX = clampX(offsetX + step); render(); }
+    if (e.key === 'ArrowUp')    { offsetY = clampY(offsetY - step); render(); }
+    if (e.key === 'ArrowDown')  { offsetY = clampY(offsetY + step); render(); }
+    if (e.key === '+' || e.key === '=') { setZoom(zoom + 0.05); offsetX = clampX(offsetX); offsetY = clampY(offsetY); render(); }
+    if (e.key === '-')                  { setZoom(zoom - 0.05); offsetX = clampX(offsetX); offsetY = clampY(offsetY); render(); }
+    if (e.key === 'Enter') { btnExport.click(); }
+  });
+</script>
+</body>
+</html>

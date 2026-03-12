@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal de Fotos de Obras | Power BI</title>
+  <title>Portal de Imagens | Power BI</title>
   <style>
     :root {
       --blue-primary: #1976D2;
@@ -18,12 +18,14 @@
       --green:        #2E7D32;
       --green-bg:     #E8F5E9;
       --green-border: #C8E6C9;
-      --red:          #C62828;
-      --red-bg:       #FFEBEE;
-      --red-border:   #FFCDD2;
-      --yellow:       #E65100;
-      --yellow-bg:    #FFF3E0;
+      --purple:       #6A1B9A;
+      --purple-bg:    #F3E5F5;
+      --purple-border:#CE93D8;
+      --orange:       #E65100;
+      --orange-bg:    #FFF3E0;
+      --orange-border:#FFCC80;
     }
+
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -50,13 +52,9 @@
 
     .header-info {
       background: var(--blue-primary);
-      padding: 12px 40px;
+      padding: 10px 40px;
     }
-    .info-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+    .info-pills { display: flex; flex-wrap: wrap; gap: 12px; }
     .info-pill {
       display: flex;
       align-items: flex-start;
@@ -65,271 +63,115 @@
       font-size: .79rem;
       line-height: 1.4;
     }
-    .info-pill-icon { flex-shrink: 0; margin-top: 1px; }
 
     /* ── MAIN ── */
     main {
       flex: 1;
-      max-width: 1100px;
+      max-width: 960px;
       width: 100%;
       margin: 0 auto;
-      padding: 28px 40px;
+      padding: 32px 40px;
     }
 
-    /* ── CARD ── */
-    .card {
+    .section-intro {
+      margin-bottom: 28px;
+    }
+    .section-intro h2 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .section-intro p {
+      font-size: .85rem;
+      color: var(--text-secondary);
+    }
+
+    /* ── TOOLS GRID ── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+    }
+
+    .tool-card {
       background: #fff;
       border: 1px solid var(--gray-border);
-      border-radius: 8px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-    .card-head {
-      padding: 14px 20px;
-      border-bottom: 1px solid var(--gray-border);
+      border-radius: 12px;
+      padding: 26px 24px 22px;
       display: flex;
-      align-items: center;
+      flex-direction: column;
       gap: 10px;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow .2s, transform .15s, border-color .2s;
     }
-    .step-num {
-      width: 22px; height: 22px;
-      border-radius: 50%;
-      background: var(--blue-primary);
-      color: #fff;
-      font-size: .72rem;
-      font-weight: 700;
+    .tool-card:not(.coming-soon):hover {
+      box-shadow: 0 4px 20px rgba(25,118,210,.13);
+      transform: translateY(-2px);
+      border-color: var(--blue-primary);
+    }
+    .tool-card.coming-soon {
+      opacity: .58;
+      cursor: default;
+    }
+    .tool-card[target="_blank"] .tool-cta::after {
+      content: '↗';
+      font-size: .8rem;
+    }
+
+    .tool-icon {
+      width: 50px; height: 50px;
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.55rem;
       flex-shrink: 0;
     }
-    .card-head h2 { font-size: .92rem; font-weight: 600; }
-    .card-head .obra-name-tag {
-      margin-left: auto;
-      font-size: .78rem;
-      color: var(--text-secondary);
-    }
-    .card-body { padding: 18px 20px; }
+    .icon-blue   { background: var(--blue-light); }
+    .icon-green  { background: var(--green-bg); }
+    .icon-purple { background: var(--purple-bg); }
+    .icon-orange { background: var(--orange-bg); }
 
-    /* ── BUTTONS ── */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 7px 16px;
-      border: none;
-      border-radius: 6px;
-      font-size: .85rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: filter .15s;
-      white-space: nowrap;
-      font-family: inherit;
-    }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .btn:not(:disabled):hover { filter: brightness(.92); }
-    .btn-primary  { background: var(--blue-primary); color: #fff; }
-    .btn-ghost    { background: var(--gray-bg); color: var(--text-primary); border: 1px solid var(--gray-border); }
-    .btn-danger   { background: var(--red-bg);   color: var(--red);   border: 1px solid var(--red-border); }
-    .btn-success  { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
-    .btn-sm       { padding: 4px 11px; font-size: .78rem; }
-
-    /* ── SELECT ── */
-    .select-styled {
-      width: 100%;
-      padding: 9px 13px;
-      border: 1px solid var(--gray-border);
-      border-radius: 6px;
-      font-size: .92rem;
+    .tool-name {
+      font-size: .97rem;
+      font-weight: 700;
       color: var(--text-primary);
-      background: #fff;
-      font-family: inherit;
-      cursor: pointer;
     }
-    .select-styled:focus {
-      outline: none;
-      border-color: var(--blue-primary);
-      box-shadow: 0 0 0 3px rgba(25,118,210,.12);
+    .tool-desc {
+      font-size: .83rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      flex: 1;
     }
-    .select-row { display: flex; gap: 10px; align-items: flex-end; }
-    .select-row .form-group { flex: 1; }
 
-    /* ── TABS ── */
-    .tabs {
-      display: flex;
-      border-bottom: 2px solid var(--gray-border);
-      margin-bottom: 18px;
-    }
-    .tab-btn {
-      padding: 9px 20px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -2px;
-      font-size: .88rem;
-      font-weight: 600;
-      color: var(--gray-muted);
-      cursor: pointer;
-      transition: color .15s, border-color .15s;
-      font-family: inherit;
-    }
-    .tab-btn.active { color: var(--blue-primary); border-bottom-color: var(--blue-primary); }
-    .tab-btn:not(.active):hover { color: var(--text-primary); }
-
-    /* ── FILE LIST ── */
-    .folder-header {
+    .tool-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      margin-top: 6px;
     }
-    .folder-label {
+
+    .status-badge {
       font-size: .72rem;
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .5px;
-      color: var(--text-secondary);
+      padding: 3px 10px;
+      border-radius: 20px;
     }
-    .count-badge {
-      font-size: .75rem;
+    .status-ok       { background: var(--green-bg);  color: var(--green);  border: 1px solid var(--green-border); }
+    .status-external { background: var(--blue-light); color: var(--blue-dark); border: 1px solid #BBDEFB; }
+    .status-soon     { background: var(--gray-bg);    color: var(--gray-muted); border: 1px solid var(--gray-border); }
+
+    .tool-cta {
+      font-size: .82rem;
       font-weight: 700;
-      padding: 2px 9px;
-      border-radius: 12px;
-    }
-    .count-ok   { background: var(--green-bg);  color: var(--green); }
-    .count-warn { background: var(--yellow-bg); color: var(--yellow); }
-    .count-full { background: var(--red-bg);    color: var(--red); }
-
-    .file-list {
-      border: 1px solid var(--gray-border);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-bottom: 14px;
-    }
-    .file-item {
+      color: var(--blue-primary);
       display: flex;
       align-items: center;
-      padding: 9px 13px;
-      border-bottom: 1px solid var(--gray-border);
-      gap: 9px;
-      transition: background .1s;
+      gap: 5px;
     }
-    .file-item:last-child { border-bottom: none; }
-    .file-item:hover { background: var(--gray-bg); }
-    .file-icon { color: var(--blue-primary); font-size: 1rem; flex-shrink: 0; }
-    .file-name { flex: 1; font-size: .87rem; word-break: break-all; }
-    .file-actions { display: flex; gap: 5px; flex-shrink: 0; }
-    .empty-list {
-      padding: 22px;
-      text-align: center;
-      color: var(--gray-muted);
-      font-size: .85rem;
-    }
-
-    /* ── UPLOAD AREA ── */
-    .upload-zone {
-      border: 2px dashed var(--gray-border);
-      border-radius: 8px;
-      padding: 22px;
-      text-align: center;
-      cursor: pointer;
-      transition: border-color .2s, background .2s;
-      background: var(--gray-bg);
-    }
-    .upload-zone:hover,
-    .upload-zone.drag-over {
-      border-color: var(--blue-primary);
-      background: var(--blue-light);
-    }
-    .upload-icon { font-size: 1.8rem; color: var(--blue-primary); margin-bottom: 7px; }
-    .upload-label { font-size: .88rem; color: var(--text-secondary); }
-    .upload-sub   { font-size: .77rem; color: var(--gray-muted); margin-top: 3px; }
-    .upload-zone input[type="file"] { display: none; }
-
-    /* ── PROGRESS ── */
-    .progress-wrap { margin-top: 10px; display: none; }
-    .progress-wrap.show { display: block; }
-    .progress-label { font-size: .78rem; color: var(--text-secondary); margin-bottom: 5px; }
-    .progress-track {
-      background: var(--gray-border);
-      border-radius: 4px;
-      height: 6px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      width: 0;
-      background: var(--blue-primary);
-      border-radius: 4px;
-      transition: width .3s;
-    }
-
-    /* ── ALERT ── */
-    .alert {
-      display: none;
-      align-items: center;
-      gap: 7px;
-      padding: 9px 13px;
-      border-radius: 6px;
-      font-size: .84rem;
-      margin-bottom: 12px;
-    }
-    .alert.show { display: flex; }
-    .alert-success { background: var(--green-bg);  color: var(--green); border: 1px solid var(--green-border); }
-    .alert-error   { background: var(--red-bg);    color: var(--red);   border: 1px solid var(--red-border); }
-    .alert-info    { background: var(--blue-light); color: var(--blue-dark); border: 1px solid #BBDEFB; }
-
-    /* ── ACTION BAR ── */
-    .action-bar {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 12px;
-    }
-    .action-bar-right { margin-left: auto; }
-
-    /* ── PLACEHOLDER ── */
-    .placeholder {
-      padding: 48px 20px;
-      text-align: center;
-      color: var(--gray-muted);
-    }
-    .placeholder-icon { font-size: 2.5rem; opacity: .35; margin-bottom: 10px; }
-    .placeholder p { font-size: .9rem; }
-
-    /* ── MODAL ── */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.4);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 100;
-    }
-    .modal-backdrop.show { display: flex; }
-    .modal {
-      background: #fff;
-      border-radius: 10px;
-      padding: 22px 24px;
-      max-width: 460px;
-      width: 92%;
-      box-shadow: 0 8px 32px rgba(0,0,0,.18);
-    }
-    .modal h3 { font-size: .97rem; font-weight: 700; margin-bottom: 8px; }
-    .modal p  { font-size: .85rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 18px; }
-    .modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
-    .modal-select {
-      width: 100%;
-      padding: 7px 11px;
-      border: 1px solid var(--gray-border);
-      border-radius: 6px;
-      font-size: .88rem;
-      font-family: inherit;
-      margin-bottom: 12px;
-    }
-    .modal-select:focus { outline: none; border-color: var(--blue-primary); }
+    .coming-soon .tool-cta { color: var(--gray-muted); }
 
     /* ── FOOTER ── */
     footer {
@@ -340,780 +182,129 @@
       font-size: .78rem;
     }
 
-    /* ── SPINNER ── */
-    .spinner {
-      display: inline-block;
-      width: 12px; height: 12px;
-      border: 2px solid rgba(255,255,255,.4);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin .65s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* ── BUSY OVERLAY ── */
-    .busy-overlay { display:none; position:fixed; inset:0; background:rgba(13,71,161,.6); z-index:9999; align-items:center; justify-content:center; }
-    .busy-overlay.show { display:flex; }
-    .busy-card { background:#fff; border-radius:16px; padding:40px 48px; text-align:center; box-shadow:0 16px 48px rgba(0,0,0,.3); max-width:360px; width:92%; }
-    .spinner-lg { width:48px; height:48px; border:5px solid var(--blue-light); border-top-color:var(--blue-primary); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 22px; }
-    .busy-title { font-size:1rem; font-weight:700; color:var(--text-primary); margin-bottom:8px; }
-    .busy-sub   { font-size:.83rem; color:var(--text-secondary); line-height:1.55; }
-
-    /* ── SYNC BADGE ── */
-    .sync-badge { font-size:.75rem; color:rgba(255,255,255,.6); display:flex; align-items:center; gap:7px; white-space:nowrap; min-width:160px; justify-content:flex-end; }
-    .sync-badge.syncing { color:#fff; }
-    .sync-badge.synced  { color:rgba(255,255,255,.72); }
-    .sync-countdown     { opacity:.8; }
-
     /* ── RESPONSIVE ── */
-    @media (max-width: 700px) {
-      .header-main, .header-info, main, .config-inner { padding-left: 16px; padding-right: 16px; }
-      .info-pills { flex-direction: column; gap: 8px; }
-      .form-row { grid-template-columns: 1fr; }
+    @media (max-width: 680px) {
+      .header-main, .header-info, main { padding-left: 16px; padding-right: 16px; }
+      .tools-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-<!-- ════════════ HEADER ════════════ -->
 <header>
   <div class="header-main">
     <div class="header-title">
-      <h1>Portal de Fotos de Obras</h1>
-      <p>Centralização de imagens para o Power BI corporativo</p>
+      <h1>Portal de Imagens</h1>
+      <p>Ferramentas para gerenciamento de imagens do Power BI</p>
     </div>
-    <div id="syncBadge" class="sync-badge"></div>
   </div>
   <div class="header-info">
     <div class="info-pills">
-      <div class="info-pill"><span class="info-pill-icon">📌</span><span>Selecione a obra e gerencie as fotos de capa ou andamento.</span></div>
-      <div class="info-pill"><span class="info-pill-icon">⚠️</span><span>Altere os nomes dos arquivos antes do envio.</span></div>
-      <div class="info-pill"><span class="info-pill-icon">📁</span><span>Capa: 1 arquivo · Andamento: até 18 arquivos.</span></div>
+      <div class="info-pill"><span>📌</span><span>Selecione uma ferramenta abaixo para começar.</span></div>
+      <div class="info-pill"><span>ℹ️</span><span>Siga a ordem recomendada: renomeie → corte → faça o upload.</span></div>
     </div>
   </div>
 </header>
 
-
-<!-- ════════════ MAIN ════════════ -->
 <main>
-
-  <!-- STEP 1 — Selecionar Obra -->
-  <div class="card">
-    <div class="card-head">
-      <div class="step-num">1</div>
-      <h2>Selecionar Obra</h2>
-    </div>
-    <div class="card-body">
-      <div class="select-row">
-        <div class="form-group" style="flex:1">
-          <label>Obra</label>
-          <select id="obraSelect" class="select-styled" onchange="selectObra(this.value)">
-            <option value="">— Selecione uma obra —</option>
-          </select>
-        </div>
-        <button class="btn btn-ghost" id="reloadBtn" disabled onclick="reloadFiles()">🔄 Recarregar</button>
-      </div>
-    </div>
+  <div class="section-intro">
+    <h2>Ferramentas disponíveis</h2>
+    <p>Gerencie as imagens das obras em etapas organizadas.</p>
   </div>
 
-  <!-- GLOBAL ALERT -->
-  <div id="globalAlert" class="alert"></div>
+  <div class="tools-grid">
 
-  <!-- PLACEHOLDER -->
-  <div id="placeholderSection" class="card">
-    <div class="placeholder">
-      <div class="placeholder-icon">🏗</div>
-      <p>Selecione uma obra acima para gerenciar as fotos.</p>
-    </div>
-  </div>
-
-  <!-- STEP 2 — Gerenciar Arquivos -->
-  <div id="filesSection" class="card" style="display:none">
-    <div class="card-head">
-      <div class="step-num">2</div>
-      <h2>Gerenciar Arquivos</h2>
-      <span id="obraNameTag" class="obra-name-tag"></span>
-    </div>
-    <div class="card-body">
-
-      <!-- TABS -->
-      <div class="tabs">
-        <button class="tab-btn active" id="tabCapaBtn"     onclick="showTab('capa')">📸 Foto de Capa</button>
-        <button class="tab-btn"        id="tabAndamentoBtn" onclick="showTab('andamento')">🖼 Fotos de Andamento</button>
+    <!-- PASSO A PASSO -->
+    <a href="passo-a-passo.html" class="tool-card">
+      <div class="tool-icon icon-orange">📋</div>
+      <div class="tool-name">Passo a Passo</div>
+      <div class="tool-desc">
+        Guia completo com instruções de cada etapa. Leia antes de começar —
+        leva menos de 2 minutos e evita erros no envio.
       </div>
-
-      <!-- TAB: CAPA -->
-      <div id="tabCapa">
-        <div class="folder-header">
-          <span class="folder-label">Foto de Capa</span>
-          <span id="capaCountBadge" class="count-badge count-ok">0 / 1</span>
-        </div>
-        <div id="capaAlert" class="alert"></div>
-        <div id="capaFileList" class="file-list"><div class="empty-list">Nenhum arquivo encontrado.</div></div>
-        <div id="capaProgress" class="progress-wrap">
-          <div id="capaProgressLabel" class="progress-label">Enviando...</div>
-          <div class="progress-track"><div id="capaProgressFill" class="progress-fill"></div></div>
-        </div>
-        <div class="upload-zone" id="capaZone"
-          onclick="document.getElementById('capaInput').click()"
-          ondragover="onDragOver(event,'capaZone')"
-          ondragleave="onDragLeave('capaZone')"
-          ondrop="onDrop(event,'capa')">
-          <div class="upload-icon">📤</div>
-          <div class="upload-label">Clique ou arraste o arquivo aqui</div>
-          <div class="upload-sub">Substitui o arquivo de capa existente</div>
-          <input type="file" id="capaInput" accept="image/*" onchange="uploadCapa(this.files)">
-        </div>
+      <div class="tool-footer">
+        <span class="status-badge status-ok">Disponível</span>
+        <span class="tool-cta">Acessar →</span>
       </div>
+    </a>
 
-      <!-- TAB: ANDAMENTO -->
-      <div id="tabAndamento" style="display:none">
-        <div class="folder-header">
-          <span class="folder-label">Fotos de Andamento</span>
-          <span id="andamentoCountBadge" class="count-badge count-ok">0 / 18</span>
-        </div>
-        <div class="action-bar">
-          <button id="deleteAllBtn" class="btn btn-danger btn-sm" disabled onclick="confirmDeleteAll()">🗑 Excluir Todos</button>
-        </div>
-        <div id="andamentoAlert" class="alert"></div>
-        <div id="andamentoFileList" class="file-list"><div class="empty-list">Nenhum arquivo encontrado.</div></div>
-        <div id="andamentoProgress" class="progress-wrap">
-          <div id="andamentoProgressLabel" class="progress-label">Enviando...</div>
-          <div class="progress-track"><div id="andamentoProgressFill" class="progress-fill"></div></div>
-        </div>
-        <div class="upload-zone" id="andamentoZone"
-          onclick="document.getElementById('andamentoInput').click()"
-          ondragover="onDragOver(event,'andamentoZone')"
-          ondragleave="onDragLeave('andamentoZone')"
-          ondrop="onDrop(event,'andamento')">
-          <div class="upload-icon">📤</div>
-          <div class="upload-label">Clique ou arraste arquivos aqui</div>
-          <div class="upload-sub">Adiciona novos arquivos (limite: 18 no total)</div>
-          <input type="file" id="andamentoInput" accept="image/*" multiple onchange="uploadAndamento(this.files)">
-        </div>
+    <!-- CORTAR -->
+    <a href="cortar.html" class="tool-card">
+      <div class="tool-icon icon-purple">✂️</div>
+      <div class="tool-name">Cortar Imagens</div>
+      <div class="tool-desc">
+        Recorte imagens na proporção exata de 750×380px para as fotos de capa.
+        Arraste para posicionar e exporte com um clique.
       </div>
+      <div class="tool-footer">
+        <span class="status-badge status-ok">Disponível</span>
+        <span class="tool-cta">Acessar →</span>
+      </div>
+    </a>
 
+    <!-- RENOMEADOR -->
+    <a href="https://ai.studio/apps/drive/1yTKNjDwgbk49SqRkYqbxHtdnjaTp77C3?fullscreenApplet=true"
+       target="_blank" rel="noopener" class="tool-card">
+      <div class="tool-icon icon-green">✏️</div>
+      <div class="tool-name">Renomeador de Fotos</div>
+      <div class="tool-desc">
+        Renomeie arquivos de imagem automaticamente com o padrão correto para o repositório,
+        usando inteligência artificial.
+      </div>
+      <div class="tool-footer">
+        <span class="status-badge status-external">Link externo</span>
+        <span class="tool-cta">Abrir</span>
+      </div>
+    </a>
+
+    <!-- UPLOAD -->
+    <a href="upload.html" class="tool-card">
+      <div class="tool-icon icon-blue">📤</div>
+      <div class="tool-name">Upload de Fotos</div>
+      <div class="tool-desc">
+        Envie fotos de capa e de andamento das obras diretamente para o repositório.
+        As imagens ficam disponíveis no Power BI em até 10 minutos.
+      </div>
+      <div class="tool-footer">
+        <span class="status-badge status-ok">Disponível</span>
+        <span class="tool-cta">Acessar →</span>
+      </div>
+    </a>
+
+    <!-- ATUALIZAR POWER BI -->
+    <div class="tool-card coming-soon">
+      <div class="tool-icon icon-blue">🔄</div>
+      <div class="tool-name">Atualizar Power BI</div>
+      <div class="tool-desc">
+        Estamos desenvolvendo uma automação para que qualquer pessoa possa disparar
+        a atualização do painel. Por enquanto, entre em contato com
+        <strong>Mateus</strong> ou <strong>Jordana</strong> para atualizar manualmente.
+      </div>
+      <div class="tool-footer">
+        <span class="status-badge status-soon">Em desenvolvimento</span>
+        <span class="tool-cta">Em breve</span>
+      </div>
     </div>
+
+    <!-- IMPRESSÃO DO POWER BI -->
+    <div class="tool-card coming-soon">
+      <div class="tool-icon icon-purple">🖨️</div>
+      <div class="tool-name">Impressão do Power BI</div>
+      <div class="tool-desc">
+        Estamos desenvolvendo uma forma simplificada de imprimir o relatório do Power BI.
+        Por enquanto, entre em contato com
+        <strong>Mateus</strong> ou <strong>Jordana</strong> para realizar a impressão.
+      </div>
+      <div class="tool-footer">
+        <span class="status-badge status-soon">Em desenvolvimento</span>
+        <span class="tool-cta">Em breve</span>
+      </div>
+    </div>
+
   </div>
-
-  <!-- STEP 3 — Finalizar Envio -->
-  <div id="finalizarSection" class="card" style="display:none">
-    <div class="card-head">
-      <div class="step-num">3</div>
-      <h2>Finalizar Envio</h2>
-    </div>
-    <div class="card-body" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px;">
-      <p style="font-size:.88rem; color:var(--text-secondary); margin:0; max-width:520px;">
-        Após confirmar o envio, as imagens serão sincronizadas automaticamente com o Power BI. O processo é concluído em até <strong>10 minutos</strong>.
-      </p>
-      <button class="btn btn-primary" onclick="abrirModalEnvio()" style="padding:10px 28px; font-size:.92rem;">
-        ✅ Confirmar Envio
-      </button>
-    </div>
-  </div>
-
 </main>
 
-<!-- ════════════ FOOTER ════════════ -->
-<footer>Todos os direitos reservados a Mateus Monteiro &nbsp;·&nbsp; Portal de Fotos de Obras &nbsp;·&nbsp; Power BI Corporativo</footer>
+<footer>Todos os direitos reservados a Mateus Monteiro &nbsp;·&nbsp; Portal de Imagens &nbsp;·&nbsp; Power BI Corporativo</footer>
 
-<!-- ════════════ BUSY OVERLAY ════════════ -->
-<div id="busyOverlay" class="busy-overlay">
-  <div class="busy-card">
-    <div class="spinner-lg"></div>
-    <p class="busy-title" id="busyTitle">Processando...</p>
-    <p class="busy-sub">Aguarde, isso pode levar alguns instantes.</p>
-  </div>
-</div>
-
-<!-- ════════════ MODAL: CONFIRM ════════════ -->
-<div class="modal-backdrop" id="confirmModal">
-  <div class="modal">
-    <h3 id="confirmTitle">Confirmar ação</h3>
-    <p id="confirmMsg">Tem certeza?</p>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeConfirm()">Cancelar</button>
-      <button class="btn btn-danger" id="confirmOkBtn">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════ MODAL: CONFIRMAÇÃO DE ENVIO ════════════ -->
-<div class="modal-backdrop" id="envioModal">
-  <div class="modal" style="max-width:500px; text-align:center;">
-    <div style="font-size:2.8rem; margin-bottom:12px;">✅</div>
-    <h3 style="font-size:1.1rem; margin-bottom:10px;">Envio Confirmado</h3>
-    <p style="font-size:.9rem; color:var(--text-secondary); line-height:1.7; margin-bottom:6px;">
-      As imagens da obra <strong id="envioObraLabel"></strong> foram enviadas com sucesso ao repositório.
-    </p>
-    <p style="font-size:.88rem; color:var(--text-secondary); line-height:1.7; margin-bottom:22px;">
-      A sincronização com o <strong>Power BI</strong> será concluída automaticamente em até <strong style="color:var(--blue-primary)">10 minutos</strong>.
-    </p>
-    <div style="background:var(--gray-bg); border-radius:8px; padding:12px 16px; margin-bottom:22px; font-size:.8rem; color:var(--text-secondary); text-align:left; border:1px solid var(--gray-border);">
-      <div style="margin-bottom:4px;"><strong>Obra:</strong> <span id="envioObraLabel2"></span></div>
-      <div style="margin-bottom:4px;"><strong>Data/Hora:</strong> <span id="envioDataHora"></span></div>
-      <div><strong>Status:</strong> <span style="color:var(--green); font-weight:600;">Enviado com sucesso</span></div>
-    </div>
-    <div class="modal-footer" style="justify-content:center;">
-      <button class="btn btn-primary" onclick="fecharModalEnvio()" style="padding:9px 32px;">Fechar</button>
-    </div>
-  </div>
-</div>
-
-
-<script>
-// ═══════════════════════════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════════════════════════
-const S = {
-  token: ['git','hub_pa','t_11BI7KA4A0AVlNTb','B1wt4a_bS2Mx8PEL7W','NpubfVlm2kLFMbDJxt','F5Kbx7RL01F3OmOOWR','HNG4SAzbgtPo'].join(''),
-  owner: 'mateusm23',
-  repo:  'portal-obras-imagens',
-  obras: [
-    'AURA',
-    'GOLDEN',
-    'BOTANICA',
-    'LIVERPOOL',
-    'LONDRES',
-    'MAISON',
-    'BONIFACIO',
-    'GARDEN',
-    'BLEND',
-    'INSIDE',
-    'GUAYA',
-    'INES',
-    'MERCEDES',
-    'ROMA',
-  ],
-  obra: '',
-  capaFiles: [],
-  andamento: [],
-  tab: 'capa',
-  confirmCb: null,
-  busy: false,
-};
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════════════════════════════
-function init() {
-  refreshObraSelect();
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// OBRAS
-// ═══════════════════════════════════════════════════════════════════════════════
-function refreshObraSelect() {
-  const sel = document.getElementById('obraSelect');
-  const prev = sel.value;
-  sel.innerHTML = '<option value="">— Selecione uma obra —</option>' +
-    S.obras.map(o => `<option value="${esc(o)}" ${o===prev?'selected':''}>${esc(o)}</option>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// OBRA SELECTION
-// ═══════════════════════════════════════════════════════════════════════════════
-async function selectObra(val) {
-  S.obra = val;
-  document.getElementById('reloadBtn').disabled = !val;
-  if (!val) {
-    document.getElementById('filesSection').style.display = 'none';
-    document.getElementById('finalizarSection').style.display = 'none';
-    document.getElementById('placeholderSection').style.display = 'block';
-    hideGlobal();
-    return;
-  }
-  if (!checkConfig()) return;
-  document.getElementById('obraNameTag').textContent = val;
-  document.getElementById('filesSection').style.display = 'block';
-  document.getElementById('finalizarSection').style.display = 'block';
-  document.getElementById('placeholderSection').style.display = 'none';
-  await loadAll();
-}
-async function reloadFiles() { if (S.obra) await loadAll(); }
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// GITHUB API
-// ═══════════════════════════════════════════════════════════════════════════════
-function checkConfig() { return true; }
-
-async function ghContents(method, path, body) {
-  const encoded = path.split('/').map(encodeURIComponent).join('/');
-  const url = `https://api.github.com/repos/${S.owner}/${S.repo}/contents/${encoded}`;
-  const res = await fetch(url, {
-    method,
-    headers: {
-      Authorization: `token ${S.token}`,
-      Accept: 'application/vnd.github.v3+json',
-      'Content-Type': 'application/json',
-    },
-    body: body ? JSON.stringify(body) : undefined,
-  });
-  if (res.status === 204) return null;
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.message || `HTTP ${res.status}`);
-  return data;
-}
-
-
-async function listFolder(folderPath) {
-  try {
-    const data = await ghContents('GET', folderPath);
-    if (!Array.isArray(data)) return [];
-    return data.filter(f => f.type === 'file' && f.name !== '.gitkeep').map(f => ({ name: f.name, sha: f.sha, path: f.path }));
-  } catch (e) {
-    if (/not found|404|empty/i.test(e.message)) return [];
-    throw e;
-  }
-}
-
-async function ghUpload(filePath, fileObj, sha) {
-  const b64 = await toBase64(fileObj);
-  try {
-    return await ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(sha ? { sha } : {}) });
-  } catch (e) {
-    // SHA divergiu (estado local desatualizado) — busca o SHA real e tenta novamente
-    if (e.message && (e.message.includes('but expected') || e.message.includes('SHA does not match'))) {
-      const current  = await ghContents('GET', filePath).catch(() => null);
-      const freshSha = current?.sha;
-      return ghContents('PUT', filePath, { message: `Upload: ${filePath}`, content: b64, ...(freshSha ? { sha: freshSha } : {}) });
-    }
-    throw e;
-  }
-}
-
-async function ghDelete(filePath, sha) {
-  return ghContents('DELETE', filePath, { message: `Delete: ${filePath}`, sha });
-}
-
-function toBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(',')[1]);
-    r.onerror = rej;
-    r.readAsDataURL(file);
-  });
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// LOAD ALL FILES
-// ═══════════════════════════════════════════════════════════════════════════════
-async function loadAll() {
-  setSyncing(true);
-  showGlobal('info', 'Carregando arquivos...');
-  try {
-    const [capa, andamento] = await Promise.all([
-      listFolder(`Obras/${S.obra}/foto_capa`),
-      listFolder(`Obras/${S.obra}/fotos_andamento`),
-    ]);
-    S.capaFiles = capa;
-    S.andamento = andamento;
-    renderCapa();
-    renderAndamento();
-    hideGlobal();
-  } catch (e) {
-    showGlobal('error', `Erro ao carregar: ${e.message}`);
-  } finally {
-    setSyncing(false);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// SYNC INDICATOR
-// ═══════════════════════════════════════════════════════════════════════════════
-let _syncTimer = null;
-let _syncTick  = 0;
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// BUSY OVERLAY
-// ═══════════════════════════════════════════════════════════════════════════════
-function setBusy(on, msg = 'Processando...') {
-  S.busy = on;
-  document.getElementById('busyOverlay').classList.toggle('show', on);
-  if (on) document.getElementById('busyTitle').textContent = msg;
-}
-
-function updateBusyMsg(msg) {
-  document.getElementById('busyTitle').textContent = msg;
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// API RETRY
-// ═══════════════════════════════════════════════════════════════════════════════
-async function apiWithRetry(fn, retries = 2) {
-  for (let i = 0; i <= retries; i++) {
-    try {
-      return await fn();
-    } catch (e) {
-      if (i === retries) throw e;
-      await new Promise(r => setTimeout(r, 1500 * (i + 1)));
-    }
-  }
-}
-
-function setSyncing(on) {
-  const el = document.getElementById('syncBadge');
-  if (!el) return;
-  clearInterval(_syncTimer);
-  _syncTimer = null;
-  if (on) {
-    el.className = 'sync-badge syncing';
-    el.innerHTML = '<span class="spinner"></span> Sincronizando...';
-  } else {
-    const hhmm = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-    _syncTick = 120;
-    const render = () => {
-      const m = Math.floor(_syncTick / 60);
-      const s = String(_syncTick % 60).padStart(2, '0');
-      el.className = 'sync-badge synced';
-      el.innerHTML = `✓ ${hhmm} &nbsp;·&nbsp; <span class="sync-countdown">refresh em ${m}:${s}</span>`;
-    };
-    render();
-    _syncTimer = setInterval(() => {
-      _syncTick--;
-      if (_syncTick <= 0) {
-        clearInterval(_syncTimer);
-        _syncTimer = null;
-        if (S.obra && !S.busy) loadAll();
-      } else {
-        render();
-      }
-    }, 1000);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════════════════════════════════════
-function renderCapa() {
-  const n = S.capaFiles.length;
-  const badge = document.getElementById('capaCountBadge');
-  badge.textContent = `${n} / 1`;
-  badge.className = `count-badge ${n >= 1 ? 'count-warn' : 'count-ok'}`;
-
-  const list = document.getElementById('capaFileList');
-  if (!n) {
-    list.innerHTML = '<div class="empty-list">Nenhum arquivo encontrado.</div>';
-    return;
-  }
-  list.innerHTML = S.capaFiles.map((f, i) => `
-    <div class="file-item">
-      <span class="file-icon">🖼</span>
-      <span class="file-name">${esc(f.name)}</span>
-      <div class="file-actions">
-        <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('capa',${i})">🗑 Excluir</button>
-      </div>
-    </div>`).join('');
-}
-
-function renderAndamento() {
-  const n = S.andamento.length;
-  const badge = document.getElementById('andamentoCountBadge');
-  badge.textContent = `${n} / 18`;
-  badge.className = `count-badge ${n >= 18 ? 'count-full' : n >= 15 ? 'count-warn' : 'count-ok'}`;
-  document.getElementById('deleteAllBtn').disabled = n === 0;
-
-  const list = document.getElementById('andamentoFileList');
-  if (!n) {
-    list.innerHTML = '<div class="empty-list">Nenhum arquivo encontrado.</div>';
-    return;
-  }
-  list.innerHTML = S.andamento.map((f, i) => `
-    <div class="file-item">
-      <span class="file-icon">🖼</span>
-      <span class="file-name">${esc(f.name)}</span>
-      <div class="file-actions">
-        <button class="btn btn-danger  btn-sm" onclick="confirmDeleteSingle('andamento',${i})">🗑 Excluir</button>
-      </div>
-    </div>`).join('');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════════════════════════════
-function showTab(tab) {
-  S.tab = tab;
-  document.getElementById('tabCapa').style.display      = tab === 'capa'      ? 'block' : 'none';
-  document.getElementById('tabAndamento').style.display = tab === 'andamento' ? 'block' : 'none';
-  document.getElementById('tabCapaBtn').classList.toggle('active',     tab === 'capa');
-  document.getElementById('tabAndamentoBtn').classList.toggle('active', tab === 'andamento');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// UPLOAD: CAPA
-// ═══════════════════════════════════════════════════════════════════════════════
-async function uploadCapa(files) {
-  if (S.busy || !files.length) return;
-  const file     = files[0];
-  const existing = S.capaFiles[0];
-  const base     = `Obras/${S.obra}/foto_capa`;
-
-  setBusy(true, 'Enviando foto de capa...');
-  try {
-    if (existing && existing.name !== file.name) {
-      await apiWithRetry(() => ghDelete(`${base}/${existing.name}`, existing.sha));
-    }
-    const sha = (existing && existing.name === file.name) ? existing.sha : null;
-    const res = await apiWithRetry(() => ghUpload(`${base}/${file.name}`, file, sha));
-    S.capaFiles = [{ name: res?.content?.name || file.name, sha: res?.content?.sha, path: res?.content?.path }];
-    renderCapa();
-    setBusy(false);
-    setSyncing(false);
-    showTabAlert('capa', 'success', `"${file.name}" enviado com sucesso.`);
-  } catch(e) {
-    setBusy(false);
-    await loadAll();
-    showTabAlert('capa', 'error', 'Não foi possível enviar. Aguarde um momento e tente novamente.');
-  }
-  document.getElementById('capaInput').value = '';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// UPLOAD: ANDAMENTO
-// ═══════════════════════════════════════════════════════════════════════════════
-async function uploadAndamento(files) {
-  if (S.busy || !files.length) return;
-  const arr      = Array.from(files);
-  S.andamento    = await listFolder(`Obras/${S.obra}/fotos_andamento`);
-  renderAndamento();
-  document.getElementById('andamentoInput').value = '';
-
-  const current  = S.andamento.length;
-  const incoming = arr.length;
-
-  if (current >= 18) {
-    // Pasta cheia — perguntar se substitui tudo
-    showConfirm(
-      'Pasta cheia',
-      `A pasta já contém <strong>18 fotos</strong>. Deseja excluir todas e enviar as <strong>${incoming}</strong> foto(s) selecionada(s)?`,
-      () => deleteAllThenUpload(arr.slice(0, 18)), 'danger', 'Substituir todas'
-    );
-  } else if (current + incoming <= 18) {
-    // Cabe tudo — confirmar envio
-    showConfirm(
-      'Confirmar envio',
-      `Deseja adicionar <strong>${incoming}</strong> foto(s)? A pasta ficará com <strong>${current + incoming} / 18</strong>.`,
-      () => doUploadAndamento(arr), 'primary', 'Enviar'
-    );
-  } else {
-    // Excede o limite — perguntar se substitui tudo
-    const toSend = arr.slice(0, 18);
-    showConfirm(
-      'Limite excedido',
-      `As <strong>${incoming}</strong> fotos selecionadas + <strong>${current}</strong> existentes ultrapassam 18. Deseja excluir todas as atuais e enviar apenas as <strong>${toSend.length}</strong> novas?`,
-      () => deleteAllThenUpload(toSend), 'danger', 'Substituir todas'
-    );
-  }
-}
-
-async function deleteAllThenUpload(arr) {
-  const files = [...S.andamento];
-  const base  = `Obras/${S.obra}/fotos_andamento`;
-  S.andamento = [];
-  renderAndamento();
-  setBusy(true, `Excluindo ${files.length} foto(s)...`);
-  try {
-    for (let i = 0; i < files.length; i++) {
-      updateBusyMsg(`Excluindo foto ${i + 1} de ${files.length}...`);
-      await apiWithRetry(() => ghDelete(`${base}/${files[i].name}`, files[i].sha));
-      if (i < files.length - 1) await new Promise(r => setTimeout(r, 250));
-    }
-  } catch (e) {
-    setBusy(false);
-    await loadAll();
-    showTabAlert('andamento', 'error', 'Não foi possível concluir. Aguarde um momento e tente novamente.');
-    return;
-  }
-  await doUploadAndamento(arr, true);
-}
-
-async function doUploadAndamento(arr, fromDelete = false) {
-  const base     = `Obras/${S.obra}/fotos_andamento`;
-  const uploaded = [];
-  if (!fromDelete) setBusy(true, `Enviando ${arr.length} foto(s)...`);
-  try {
-    for (let i = 0; i < arr.length; i++) {
-      const f = arr[i];
-      updateBusyMsg(`Enviando foto ${i + 1} de ${arr.length}...`);
-      const existing = S.andamento.find(x => x.name === f.name);
-      const res = await apiWithRetry(() => ghUpload(`${base}/${f.name}`, f, existing?.sha || null));
-      uploaded.push({ name: res?.content?.name || f.name, sha: res?.content?.sha, path: res?.content?.path });
-      if (i < arr.length - 1) await new Promise(r => setTimeout(r, 200));
-    }
-  } catch (e) {
-    setBusy(false);
-    await loadAll();
-    showTabAlert('andamento', 'error', 'Não foi possível enviar todos os arquivos. Aguarde um momento e tente novamente.');
-    return;
-  }
-  for (const u of uploaded) {
-    const idx = S.andamento.findIndex(x => x.name === u.name);
-    if (idx >= 0) S.andamento[idx] = u;
-    else S.andamento.push(u);
-  }
-  renderAndamento();
-  setBusy(false);
-  setSyncing(false);
-  showTabAlert('andamento', 'success', `${arr.length} foto(s) enviada(s) com sucesso.`);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// DELETE SINGLE
-// ═══════════════════════════════════════════════════════════════════════════════
-function confirmDeleteSingle(folder, idx) {
-  if (S.busy) return;
-  const files = folder === 'capa' ? S.capaFiles : S.andamento;
-  const f = files[idx];
-  showConfirm(
-    'Excluir Arquivo',
-    `Tem certeza que deseja excluir <strong>"${esc(f.name)}"</strong>?`,
-    async () => {
-      if (folder === 'capa') { S.capaFiles.splice(idx, 1); renderCapa(); }
-      else                   { S.andamento.splice(idx, 1); renderAndamento(); }
-      setSyncing(false);
-      const folderPath = folder === 'capa' ? 'foto_capa' : 'fotos_andamento';
-      try {
-        await apiWithRetry(() => ghDelete(`Obras/${S.obra}/${folderPath}/${f.name}`, f.sha));
-        showTabAlert(folder, 'success', `"${f.name}" excluído.`);
-      } catch(e) {
-        if (folder === 'capa') { S.capaFiles.splice(idx, 0, f); renderCapa(); }
-        else                   { S.andamento.splice(idx, 0, f); renderAndamento(); }
-        showTabAlert(folder, 'error', 'Não foi possível excluir. Tente novamente.');
-      }
-    }
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// DELETE ALL (ANDAMENTO)
-// ═══════════════════════════════════════════════════════════════════════════════
-function confirmDeleteAll() {
-  if (S.busy || !S.andamento.length) return;
-  showConfirm(
-    'Excluir Todos os Arquivos',
-    `Tem certeza que deseja excluir <strong>todos os ${S.andamento.length} arquivos</strong> de andamento?`,
-    async () => {
-      const files = [...S.andamento];
-      const base  = `Obras/${S.obra}/fotos_andamento`;
-      S.andamento = [];
-      renderAndamento();
-      setBusy(true, `Excluindo ${files.length} foto(s)...`);
-      try {
-        for (let i = 0; i < files.length; i++) {
-          updateBusyMsg(`Excluindo foto ${i + 1} de ${files.length}...`);
-          await apiWithRetry(() => ghDelete(`${base}/${files[i].name}`, files[i].sha));
-          if (i < files.length - 1) await new Promise(r => setTimeout(r, 250));
-        }
-      } catch(e) {
-        setBusy(false);
-        await loadAll();
-        showTabAlert('andamento', 'error', 'Não foi possível excluir todos. Aguarde um momento e tente novamente.');
-        return;
-      }
-      setBusy(false);
-      setSyncing(false);
-      showTabAlert('andamento', 'success', 'Todos os arquivos foram excluídos.');
-    }
-  );
-}
-
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// DRAG & DROP
-// ═══════════════════════════════════════════════════════════════════════════════
-function onDragOver(e, zoneId)  { e.preventDefault(); document.getElementById(zoneId).classList.add('drag-over'); }
-function onDragLeave(zoneId)    { document.getElementById(zoneId).classList.remove('drag-over'); }
-function onDrop(e, folder) {
-  e.preventDefault();
-  const zoneId = folder === 'capa' ? 'capaZone' : 'andamentoZone';
-  document.getElementById(zoneId).classList.remove('drag-over');
-  if (folder === 'capa')      uploadCapa(e.dataTransfer.files);
-  else                         uploadAndamento(e.dataTransfer.files);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// CONFIRM MODAL
-// ═══════════════════════════════════════════════════════════════════════════════
-function showConfirm(title, msg, cb, btnStyle = 'danger', btnText = 'Confirmar') {
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmMsg').innerHTML = msg;
-  S.confirmCb = cb;
-  const btn = document.getElementById('confirmOkBtn');
-  btn.className = `btn btn-${btnStyle}`;
-  btn.textContent = btnText;
-  document.getElementById('confirmModal').classList.add('show');
-}
-function closeConfirm() {
-  document.getElementById('confirmModal').classList.remove('show');
-  S.confirmCb = null;
-}
-document.getElementById('confirmOkBtn').onclick = async () => {
-  const cb = S.confirmCb;
-  closeConfirm();
-  if (cb) await cb();
-};
-document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
-document.getElementById('envioModal').addEventListener('click',   e => { if(e.target===e.currentTarget) fecharModalEnvio(); });
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// MODAL: ENVIO
-// ═══════════════════════════════════════════════════════════════════════════════
-function abrirModalEnvio() {
-  const agora = new Date();
-  const fmt = agora.toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' });
-  document.getElementById('envioObraLabel').textContent  = S.obra;
-  document.getElementById('envioObraLabel2').textContent = S.obra;
-  document.getElementById('envioDataHora').textContent   = fmt;
-  document.getElementById('envioModal').classList.add('show');
-}
-function fecharModalEnvio() {
-  document.getElementById('envioModal').classList.remove('show');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// ALERTS & PROGRESS
-// ═══════════════════════════════════════════════════════════════════════════════
-function showGlobal(type, msg) {
-  const el = document.getElementById('globalAlert');
-  el.className = `alert alert-${type} show`;
-  el.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
-}
-function hideGlobal() { document.getElementById('globalAlert').className = 'alert'; }
-
-function showTabAlert(folder, type, msg) {
-  const id = folder === 'capa' ? 'capaAlert' : 'andamentoAlert';
-  const el = document.getElementById(id);
-  el.className = `alert alert-${type} show`;
-  el.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
-  setTimeout(() => { el.className = 'alert'; }, 6000);
-}
-
-function setProgress(folder, pct, label) {
-  const prefix = folder === 'capa' ? 'capa' : 'andamento';
-  document.getElementById(`${prefix}Progress`).classList.add('show');
-  document.getElementById(`${prefix}ProgressLabel`).textContent = label;
-  document.getElementById(`${prefix}ProgressFill`).style.width = pct + '%';
-}
-function hideProgress(folder) {
-  const prefix = folder === 'capa' ? 'capa' : 'andamento';
-  document.getElementById(`${prefix}Progress`).classList.remove('show');
-  document.getElementById(`${prefix}ProgressFill`).style.width = '0%';
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════════════════════════
-function esc(str) {
-  return String(str)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-    .replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════════════════════════════════════════════
-init();
-</script>
 </body>
 </html>
