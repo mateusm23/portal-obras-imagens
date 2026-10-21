@@ -549,6 +549,7 @@
           </select>
         </div>
         <button class="btn btn-ghost" id="reloadBtn" disabled onclick="reloadFiles()">🔄 Recarregar</button>
+        <button class="btn btn-primary" id="novaObraBtn" onclick="openNovaObraModal()">➕ Nova Obra</button>
       </div>
     </div>
   </div>
@@ -675,6 +676,21 @@
   </div>
 </div>
 
+<!-- ════════════ MODAL: NOVA OBRA ════════════ -->
+<div class="modal-backdrop" id="novaObraModal">
+  <div class="modal">
+    <h3>Nova Obra</h3>
+    <p>Digite o nome da nova obra. As pastas de capa e de andamento são criadas automaticamente no repositório.</p>
+    <input type="text" id="novaObraInput" class="modal-select" placeholder="Ex.: NOME DA OBRA"
+           onkeydown="novaObraKeydown(event)" maxlength="80">
+    <div id="novaObraError" style="color:var(--red); font-size:.8rem; margin:-6px 0 12px; display:none;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeNovaObraModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="submitNovaObra()">Criar Obra</button>
+    </div>
+  </div>
+</div>
+
 <!-- ════════════ MODAL: CONFIRMAÇÃO DE ENVIO ════════════ -->
 <div class="modal-backdrop" id="envioModal">
   <div class="modal" style="max-width:500px; text-align:center;">
@@ -743,11 +759,27 @@ const S = {
 // ═══════════════════════════════════════════════════════════════════════════════
 function init() {
   refreshObraSelect();
+  loadObrasList();
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // OBRAS
 // ═══════════════════════════════════════════════════════════════════════════════
+async function loadObrasList() {
+  try {
+    const data = await ghContents('GET', 'Obras');
+    if (Array.isArray(data)) {
+      const live = data.filter(d => d.type === 'dir').map(d => d.name);
+      if (live.length) {
+        S.obras = live.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+      }
+    }
+  } catch (e) {
+    // API indisponível: mantém a lista local como alternativa.
+  }
+  refreshObraSelect();
+}
+
 function refreshObraSelect() {
   const sel = document.getElementById('obraSelect');
   const prev = sel.value;
@@ -1226,6 +1258,66 @@ document.getElementById('confirmOkBtn').onclick = async () => {
 };
 document.getElementById('confirmModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeConfirm(); });
 document.getElementById('envioModal').addEventListener('click',   e => { if(e.target===e.currentTarget) fecharModalEnvio(); });
+document.getElementById('novaObraModal').addEventListener('click', e => { if(e.target===e.currentTarget) closeNovaObraModal(); });
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NOVA OBRA (criar direto pela tela, sem editar código)
+// ═══════════════════════════════════════════════════════════════════════════════
+function openNovaObraModal() {
+  if (S.busy) return;
+  document.getElementById('novaObraInput').value = '';
+  document.getElementById('novaObraError').style.display = 'none';
+  document.getElementById('novaObraModal').classList.add('show');
+  setTimeout(() => document.getElementById('novaObraInput').focus(), 50);
+}
+function closeNovaObraModal() {
+  document.getElementById('novaObraModal').classList.remove('show');
+}
+function novaObraKeydown(e) {
+  if (e.key === 'Enter') submitNovaObra();
+  if (e.key === 'Escape') closeNovaObraModal();
+}
+async function submitNovaObra() {
+  const raw   = document.getElementById('novaObraInput').value;
+  const nome  = raw.trim().replace(/\s+/g, ' ').toUpperCase();
+  const errEl = document.getElementById('novaObraError');
+  errEl.style.display = 'none';
+
+  if (!nome) {
+    errEl.textContent = 'Digite um nome para a obra.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (/[\\\/]/.test(nome)) {
+    errEl.textContent = 'O nome não pode conter barras ( / \\ ).';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (S.obras.some(o => o.toUpperCase() === nome)) {
+    errEl.textContent = 'Já existe uma obra com esse nome.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  closeNovaObraModal();
+  setBusy(true, `Criando obra "${nome}"...`);
+  try {
+    await apiWithRetry(() => ghContents('PUT', `Obras/${nome}/foto_capa/.gitkeep`, { message: `Cria obra: ${nome}`, content: '' }));
+    await apiWithRetry(() => ghContents('PUT', `Obras/${nome}/fotos_andamento/.gitkeep`, { message: `Cria obra: ${nome}`, content: '' }));
+    if (!S.obras.includes(nome)) {
+      S.obras.push(nome);
+      S.obras.sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    }
+    refreshObraSelect();
+    setBusy(false);
+    document.getElementById('obraSelect').value = nome;
+    await selectObra(nome);
+    showGlobal('success', `Obra "${nome}" criada com sucesso.`);
+  } catch (e) {
+    setBusy(false);
+    showGlobal('error', `Não foi possível criar a obra: ${e.message}`);
+  }
+}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // MODAL: ENVIO
