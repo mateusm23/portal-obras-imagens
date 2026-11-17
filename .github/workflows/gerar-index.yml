@@ -1,0 +1,70 @@
+name: Gerar index.json
+
+# Regera o index.json sempre que alguma foto entra ou sai do repositorio,
+# inclusive nos uploads feitos pela tela upload.html. Assim o Power BI nunca
+# le uma listagem desatualizada e ninguem precisa rodar script na mao.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Obras/**'
+      - 'scripts/gerar_index.py'
+      - '.github/workflows/gerar-index.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# O upload.html envia uma foto por commit, entao subir 12 fotos dispara 12
+# execucoes. Cancelar as antigas deixa so a ultima rodar -- ela ja enxerga
+# todas as fotos, e o resultado final e o mesmo.
+concurrency:
+  group: gerar-index
+  cancel-in-progress: true
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Baixar o repositorio
+        uses: actions/checkout@v4
+
+      - name: Preparar o Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Gerar o index.json
+        env:
+          INDEX_REPO: ${{ github.repository }}
+          INDEX_BRANCH: ${{ github.ref_name }}
+        run: python scripts/gerar_index.py
+
+      - name: Commitar se houver mudanca
+        run: |
+          if [ -z "$(git status --porcelain index.json)" ]; then
+            echo "index.json ja esta atualizado, nada a commitar."
+            exit 0
+          fi
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git commit -m "Atualiza index.json [skip ci]"
+
+          # O upload.html pode commitar ao mesmo tempo que este job roda, entao
+          # tenta algumas vezes com rebase antes de desistir.
+          for tentativa in 1 2 3 4 5; do
+            if git push; then
+              echo "index.json publicado (tentativa $tentativa)."
+              exit 0
+            fi
+            echo "Push recusado, sincronizando e tentando de novo..."
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || exit 1
+            sleep 3
+          done
+
+          echo "Nao foi possivel publicar o index.json apos 5 tentativas."
+          exit 1
