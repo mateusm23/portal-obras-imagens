@@ -1,8 +1,8 @@
 {
-  "gerado_em": "2026-11-19T13:46:22+00:00",
+  "gerado_em": "2026-11-19T13:53:47+00:00",
   "repo": "mateusm23/portal-obras-imagens",
   "branch": "main",
-  "total": 347,
+  "total": 348,
   "arquivos": [
     {
       "obra": "AURA",
@@ -2327,6 +2327,13 @@
       "ordem": 12,
       "name": "12. - Canteiro - 2026-10 - Banheiros.jpeg",
       "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/PAULISTANO/fotos_andamento/12.%20-%20Canteiro%20-%202026-10%20-%20Banheiros.jpeg"
+    },
+    {
+      "obra": "QUEBEC",
+      "tipo": "foto_capa",
+      "ordem": 1,
+      "name": "Captura de tela 2026-11-19 105323.png",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/QUEBEC/foto_capa/Captura%20de%20tela%202026-11-19%20105323.png"
     },
     {
       "obra": "ROMA",
