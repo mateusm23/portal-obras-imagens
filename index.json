@@ -1,8 +1,8 @@
 {
-  "gerado_em": "2026-11-19T11:50:16+00:00",
+  "gerado_em": "2026-11-19T11:52:44+00:00",
   "repo": "mateusm23/portal-obras-imagens",
   "branch": "main",
-  "total": 331,
+  "total": 347,
   "arquivos": [
     {
       "obra": "AURA",
@@ -1158,6 +1158,118 @@
       "ordem": 1,
       "name": "recorte_1456x738.png",
       "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/foto_capa/recorte_1456x738.png"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 1,
+      "name": "01-Fachada Rua recife.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/01-Fachada%20Rua%20recife.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 2,
+      "name": "02-Pintura Externa Rua Recife.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/02-Pintura%20Externa%20Rua%20Recife.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 3,
+      "name": "03-Pintura Externa Rooftop.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/03-Pintura%20Externa%20Rooftop.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 4,
+      "name": "03-Pintura Externa Rua Recife.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/03-Pintura%20Externa%20Rua%20Recife.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 5,
+      "name": "04-Visão Fachada Oeste.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/04-Vis%C3%A3o%20Fachada%20Oeste.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 6,
+      "name": "05-Visão Fachada Oeste.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/05-Vis%C3%A3o%20Fachada%20Oeste.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 7,
+      "name": "06-Visão Fachada Osvaldo Cruz Lazer.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/06-Vis%C3%A3o%20Fachada%20Osvaldo%20Cruz%20Lazer.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 8,
+      "name": "06-Visão Fachada Osvaldo Cruz.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/06-Vis%C3%A3o%20Fachada%20Osvaldo%20Cruz.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 9,
+      "name": "07-Rooftop.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/07-Rooftop.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 10,
+      "name": "08-Rooftop.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/08-Rooftop.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 11,
+      "name": "10-Revestimento Cerâmico 18pav.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/10-Revestimento%20Cer%C3%A2mico%2018pav.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 12,
+      "name": "12-Pintura 10pav.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/12-Pintura%2010pav.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 13,
+      "name": "13-Portas 10pav.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/13-Portas%2010pav.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 14,
+      "name": "14-Lazer.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/14-Lazer.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 15,
+      "name": "16-Manchas Pintura Externa.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/16-Manchas%20Pintura%20Externa.jpeg"
+    },
+    {
+      "obra": "INSIDE",
+      "tipo": "fotos_andamento",
+      "ordem": 16,
+      "name": "18-ACM-chapa perfurada.jpeg",
+      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/18-ACM-chapa%20perfurada.jpeg"
     },
     {
       "obra": "LINK",
