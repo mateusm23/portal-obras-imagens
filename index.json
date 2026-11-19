@@ -1,8 +1,8 @@
 {
-  "gerado_em": "2026-11-18T10:40:20+00:00",
+  "gerado_em": "2026-11-19T11:50:16+00:00",
   "repo": "mateusm23/portal-obras-imagens",
   "branch": "main",
-  "total": 349,
+  "total": 331,
   "arquivos": [
     {
       "obra": "AURA",
@@ -1158,132 +1158,6 @@
       "ordem": 1,
       "name": "recorte_1456x738.png",
       "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/foto_capa/recorte_1456x738.png"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 1,
-      "name": "01. Inside Home Club - 2026-07-01 - Fachada Rua Recife.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/01.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Fachada%20Rua%20Recife.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 2,
-      "name": "02. Inside Home Club - 2026-07-01 - Fachada Rua Osvaldo Cruz.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/02.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Fachada%20Rua%20Osvaldo%20Cruz.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 3,
-      "name": "03. Inside Home Club - 2026-07-01 - Fachada Rua Presidente Kennedy.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/03.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Fachada%20Rua%20Presidente%20Kennedy.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 4,
-      "name": "04. Inside Home Club - 2026-07-01 - Fachada Rua Pio XII.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/04.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Fachada%20Rua%20Pio%20XII.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 5,
-      "name": "05. Inside Home Club - 2026-07-01 - Instalação Cobertura Metálica.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/05.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Instala%C3%A7%C3%A3o%20Cobertura%20Met%C3%A1lica.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 6,
-      "name": "06. Inside Home Club - 2026-07-01 - Acabamentos e requadros - Cobertura.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/06.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Acabamentos%20e%20requadros%20-%20Cobertura.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 7,
-      "name": "07. Inside Home Club - 2026-07-01 - Apartamento Studio.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/07.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Apartamento%20Studio.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 8,
-      "name": "08. Inside Home Club - 2026-07-01 - Revestimento Cerâmico - L14.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/08.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Revestimento%20Cer%C3%A2mico%20-%20L14.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 9,
-      "name": "09. Inside Home Club - 2026-07-01 - Instalação de Pingadeiras - Fachada Pres. Kennedy.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/09.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Instala%C3%A7%C3%A3o%20de%20Pingadeiras%20-%20Fachada%20Pres.%20Kennedy.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 10,
-      "name": "10. Inside Home Club - 2026-07-01 - Textura Caixa de escada.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/10.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Textura%20Caixa%20de%20escada.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 11,
-      "name": "11. Inside Home Club - 2026-07-01 - Pintura Interna - Lazer.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/11.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Pintura%20Interna%20-%20Lazer.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 12,
-      "name": "12. Inside Home Club - 2026-07-01 - Revestimento e pintura - Lazer Interno.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/12.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Revestimento%20e%20pintura%20-%20Lazer%20Interno.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 13,
-      "name": "13. Inside Home Club - 2026-07-01 - Acabamentos e Requadros - Lojas Comerciais.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/13.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Acabamentos%20e%20Requadros%20-%20Lojas%20Comerciais.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 14,
-      "name": "14. Inside Home Club - 2026-07-01 - Acabamentos e requadros - Lazer Externo.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/14.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Acabamentos%20e%20requadros%20-%20Lazer%20Externo.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 15,
-      "name": "15. Inside Home Club - 2026-07-01 - Reboco e requadros - Lazer Externo.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/15.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Reboco%20e%20requadros%20-%20Lazer%20Externo.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 16,
-      "name": "16. Inside Home Club - 2026-07-01 - Requadro trecho Piscina - Lazer.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/16.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Requadro%20trecho%20Piscina%20-%20Lazer.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 17,
-      "name": "17. Inside Home Club - 2026-07-01 - Casa de Gás.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/17.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Casa%20de%20G%C3%A1s.jpg"
-    },
-    {
-      "obra": "INSIDE",
-      "tipo": "fotos_andamento",
-      "ordem": 18,
-      "name": "18. Inside Home Club - 2026-07-01 - Reboco e Requadros - Respaldo Térreo.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/INSIDE/fotos_andamento/18.%20Inside%20Home%20Club%20-%202026-07-01%20-%20Reboco%20e%20Requadros%20-%20Respaldo%20T%C3%A9rreo.jpg"
     },
     {
       "obra": "LINK",
