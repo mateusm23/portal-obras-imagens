@@ -1,8 +1,8 @@
 {
-  "gerado_em": "2026-11-19T14:05:03+00:00",
+  "gerado_em": "2026-11-21T18:02:42+00:00",
   "repo": "mateusm23/portal-obras-imagens",
   "branch": "main",
-  "total": 348,
+  "total": 330,
   "arquivos": [
     {
       "obra": "AURA",
@@ -66,132 +66,6 @@
       "ordem": 1,
       "name": "recorte_1159x587.png",
       "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/foto_capa/recorte_1159x587.png"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 1,
-      "name": "01. Blend Home Club - 2026-08-01 - Fachada Sul - Rua Pernambuco.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/01.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Fachada%20Sul%20-%20Rua%20Pernambuco.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 2,
-      "name": "02. Blend Home Club - 2026-08-01 - Fachada Oeste - Rua Visconde de Guarapuava.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/02.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Fachada%20Oeste%20-%20Rua%20Visconde%20de%20Guarapuava.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 3,
-      "name": "03. Blend Home Club - 2026-08-01 - Instalação de ACM Fachada Leste.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/03.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20ACM%20Fachada%20Leste.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 4,
-      "name": "04. Blend Home Club - 2026-08-01 - Esquadrias das Fachadas Finalizadas - Lojas 1 e 2.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/04.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Esquadrias%20das%20Fachadas%20Finalizadas%20-%20Lojas%201%20e%202.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 5,
-      "name": "05. Blend Home Club - 2026-08-01 - Preparação para Contrapiso Entrada de Veículos.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/05.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Prepara%C3%A7%C3%A3o%20para%20Contrapiso%20Entrada%20de%20Ve%C3%ADculos.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 6,
-      "name": "06. Blend Home Club - 2026-08-01 - Entrada de rede GLP Finalizada.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/06.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Entrada%20de%20rede%20GLP%20Finalizada.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 7,
-      "name": "07. Blend Home Club - 2026-08-01 - Área de Lazer Externa.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/07.%20Blend%20Home%20Club%20-%202026-08-01%20-%20%C3%81rea%20de%20Lazer%20Externa.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 8,
-      "name": "08. Blend Home Club - 2026-08-01 - Instalação de Iluminação - Salão de Festa.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/08.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20Ilumina%C3%A7%C3%A3o%20-%20Sal%C3%A3o%20de%20Festa.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 9,
-      "name": "09. Blend Home Club - 2026-08-01 - Instalação de Esquadrias - Academia Lazer Interno.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/09.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20Esquadrias%20-%20Academia%20Lazer%20Interno.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 10,
-      "name": "10. Blend Home Club - 2026-08-01 - Instalação de Portas Corta Fogo.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/10.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20Portas%20Corta%20Fogo.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 11,
-      "name": "11. Blend Home Club - 2026-08-01 - Portas finalizadas - L17.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/11.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Portas%20finalizadas%20-%20L17.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 12,
-      "name": "12. Blend Home Club - 2026-08-01 - Instalação Piso Laminado - Apto 1801.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/12.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20Piso%20Laminado%20-%20Apto%201801.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 13,
-      "name": "13. Blend Home Club - 2026-08-01 - Instalação de Acabamentos Elétricos - L19.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/13.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20Acabamentos%20El%C3%A9tricos%20-%20L19.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 14,
-      "name": "14. Blend Home Club - 2026-08-01 - Marcenaria nos shafts do hall - L19.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/14.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Marcenaria%20nos%20shafts%20do%20hall%20-%20L19.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 15,
-      "name": "15. Blend Home Club - 2026-08-01 - Finalização do Forro Vinílico - Rooftop.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/15.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Finaliza%C3%A7%C3%A3o%20do%20Forro%20Vin%C3%ADlico%20-%20Rooftop.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 16,
-      "name": "16. Blend Home Club - 2026-08-01 - Guarda Corpo - Rooftop.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/16.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Guarda%20Corpo%20-%20Rooftop.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 17,
-      "name": "17. Blend Home Club - 2026-08-01 - Instalação de Iluminação de Emergência - Rooftop.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/17.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Instala%C3%A7%C3%A3o%20de%20Ilumina%C3%A7%C3%A3o%20de%20Emerg%C3%AAncia%20-%20Rooftop.jpg"
-    },
-    {
-      "obra": "BLEND",
-      "tipo": "fotos_andamento",
-      "ordem": 18,
-      "name": "18. Blend Home Club - 2026-08-01 - Finalização de Instalação SPDA - Cobertura.jpg",
-      "url": "https://raw.githubusercontent.com/mateusm23/portal-obras-imagens/main/Obras/BLEND/fotos_andamento/18.%20Blend%20Home%20Club%20-%202026-08-01%20-%20Finaliza%C3%A7%C3%A3o%20de%20Instala%C3%A7%C3%A3o%20SPDA%20-%20Cobertura.jpg"
     },
     {
       "obra": "BONIFACIO",
